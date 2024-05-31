@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 
 public class Adm extends UserBase{
     private final boolean admin;
+    private int id;
     private String username;
 
     public Adm(boolean admin, String name, String email, String senha, String username){
@@ -17,7 +18,28 @@ public class Adm extends UserBase{
         this.admin = admin;
         this.username = username;
     }
-        @Override
+
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    @Override
         public void registrarUsuario(Usuario user) {
             JSONArray biblioteca = new JSONArray();
             JSONObject jsonObject = new JSONObject();

@@ -9,6 +9,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class Game {
+
+    private int id;
     private String name;
     private String descricao;
     private Double price;
@@ -20,7 +22,15 @@ public class Game {
         this.price = preco;
         this.directory = directory;
     }
-    
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getName() { return name; }
 
     public void setName(String name) { this.name = name; }
