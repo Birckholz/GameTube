@@ -3,6 +3,7 @@ package src.View.User;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import src.Controller.GameFotoController;
 import src.Controller.UsuarioController;
 import src.Session.Session;
 
@@ -15,13 +16,16 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-public class Biblioteca extends JFrame {
+public class BibliotecaView extends JFrame {
     private Session session;
     private JPanel gamePanelContainer;
     private UsuarioController userController;
-    public Biblioteca(Session session) {
-
+    private GameFotoController gameFotoController;
+    public BibliotecaView(Session session) {
+        gameFotoController = new GameFotoController();
         userController = new UsuarioController();
         this.session = session;
         if (session == null) {
@@ -34,7 +38,7 @@ public class Biblioteca extends JFrame {
             JDialog dialog = optionPane.createDialog("No Session");
 
             customButton.addActionListener(e -> {
-                descartar();
+                dispose();
                 dialog.dispose();
             });
 
@@ -86,15 +90,13 @@ public class Biblioteca extends JFrame {
                 readGameListingsFromFile("src/games.json");
             } catch (Exception e) {
                 e.printStackTrace();
-                descartar();
+                dispose();
             }
         }
     }
 
     private void readGameListingsFromFile(String filePath) {
         try {
-            String fileContent = new String(Files.readAllBytes(Paths.get(filePath)));
-            JSONArray gameListingsArray = new JSONArray(fileContent);
 
             gamePanelContainer = new JPanel(new GridLayout(0, 3, 10, 10));
             gamePanelContainer.setBackground(Color.DARK_GRAY);
@@ -103,69 +105,38 @@ public class Biblioteca extends JFrame {
             fillerPanel.setOpaque(false);
             gamePanelContainer.add(fillerPanel);
 
-            JSONArray biblioteca = this.session.getJSONArray("biblioteca");
+            ResultSet resultSet = gameFotoController.fetchGameListingsWithPhotos();
 
-            for (int i = 0; i < gameListingsArray.length(); i++) {
-                JSONObject listingObject = gameListingsArray.getJSONObject(i);
-                String imagePath = listingObject.getString("directory");
-                String name = listingObject.getString("name");
+            while (resultSet.next()) {
+                String name = resultSet.getString("NOME");
+                byte[] pictureBytes = resultSet.getBytes("PICTURE");
 
-                for (int l = 0; l < biblioteca.length(); l++) {
-                    try {
-                        String gametemp = biblioteca.getString(l);
-
-                        if (name.equals(gametemp)) {
-                            ImageIcon imageIcon = new ImageIcon(imagePath);
-                            Image image = imageIcon.getImage();
-                            Image scaledImage = image.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
-                            ImageIcon scaledImageIcon = new ImageIcon(scaledImage);
-
-                            JPanel gamePanel = new JPanel();
-                            gamePanel.setLayout(new BoxLayout(gamePanel, BoxLayout.Y_AXIS));
-                            gamePanel.setBackground(Color.DARK_GRAY);
-
-                            JLabel imageLabel = new JLabel();
-                            imageLabel.setIcon(scaledImageIcon);
-                            gamePanel.add(imageLabel);
-
-                            JPanel namePanel = new JPanel();
-                            namePanel.setLayout(new BoxLayout(namePanel, BoxLayout.Y_AXIS));
-                            namePanel.setBackground(Color.DARK_GRAY);
-
-                            JLabel nameLabel = new JLabel(name);
-                            nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
-                            nameLabel.setForeground(Color.WHITE);
-                            namePanel.add(nameLabel);
-
-                            gamePanel.add(namePanel);
-
-                            gamePanelContainer.add(gamePanel);
-
-                            imageLabel.addMouseListener(new MouseAdapter() {
-                                @Override
-                                public void mouseClicked(MouseEvent e) {
-                                    new GameSpecificGUI(listingObject, session);
-                                    descartar();
-                                }
-                            });
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
+                ImageIcon imageIcon = new ImageIcon(pictureBytes);
+                Image image = imageIcon.getImage();
+                Image scaledImage = image.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+                ImageIcon scaledImageIcon = new ImageIcon(scaledImage);
+                JPanel gamePanel = new JPanel();
+                gamePanel.setLayout(new BoxLayout(gamePanel, BoxLayout.Y_AXIS));
+                gamePanel.setBackground(Color.DARK_GRAY);
+                JLabel imageLabel = new JLabel();
+                imageLabel.setIcon(scaledImageIcon);
+                gamePanel.add(imageLabel);
+                JPanel namePanel = new JPanel();
+                namePanel.setLayout(new BoxLayout(namePanel, BoxLayout.Y_AXIS));
+                namePanel.setBackground(Color.DARK_GRAY);
+                JLabel nameLabel = new JLabel(name);
+                nameLabel.setHorizontalAlignment(SwingConstants.CENTER);
+                nameLabel.setForeground(Color.WHITE);
+                namePanel.add(nameLabel);
+                gamePanel.add(namePanel);
+                gamePanelContainer.add(gamePanel);
+                getContentPane().add(gamePanelContainer, BorderLayout.CENTER);
+                getContentPane().revalidate();
+                getContentPane().repaint();
             }
-
-            getContentPane().add(gamePanelContainer, BorderLayout.CENTER);
-            getContentPane().revalidate();
-            getContentPane().repaint();
-        } catch (IOException | JSONException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-
-    public void descartar() {
-        dispose();
-    }
-
-
 }
+

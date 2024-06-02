@@ -81,4 +81,37 @@ public class GameFotoDAO {
         }
         return gameFotos;
     }
-}
+
+    public ResultSet gameComFotos() throws SQLException {
+            String query = ("SELECT GAME.ID, GAME.NOME, GAME.DESCRICAO, GAME.PRECO, GAME_FOTO.PICTURE " +
+                    "FROM GAME " +
+                    "INNER JOIN GAME_FOTO ON GAME.ID = GAME_FOTO.ID_GAME");
+
+            Connection conn = null;
+            PreparedStatement pstmt = null;
+            ResultSet resultSet = null;
+
+            try {
+                conn = Conexao.getConexao();
+                pstmt = conn.prepareStatement(query);
+                resultSet = pstmt.executeQuery();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                // Handle any SQL exceptions appropriately
+                throw e;
+            } finally {
+                // Close resources in a finally block to ensure they are always closed
+                if (resultSet != null) {
+                    resultSet.close();
+                }
+                if (pstmt != null) {
+                    pstmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            }
+            return resultSet;
+        }
+    }
+

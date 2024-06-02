@@ -34,5 +34,5 @@ public abstract class UserBase{
     public void setEmail(String email) {
         this.email = email;
     }
-    public abstract void registrarUsuario(Usuario user);
+
 }

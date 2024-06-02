@@ -1,6 +1,5 @@
 package src.View.User;
 
-import org.json.JSONObject;
 import src.MyCustomException;
 import src.Session.Session;
 
@@ -8,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 public class Perfil extends JFrame {
 
@@ -99,7 +99,11 @@ public class Perfil extends JFrame {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         dispose();
-                        new profileEditGUI(session).setVisible(true);
+                        try {
+                            new profileEditGUI(session).setVisible(true);
+                        } catch (SQLException ex) {
+                            ex.printStackTrace();
+                        }
                     }
                 });
 
@@ -112,7 +116,7 @@ public class Perfil extends JFrame {
                 verJogos.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         dispose();
-                        new Biblioteca(session).setVisible(true);
+                        new BibliotecaView(session).setVisible(true);
                     }
                 });
 

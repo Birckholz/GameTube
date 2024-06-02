@@ -2,6 +2,8 @@ package src.Controller;
 
 import src.DAO.GameFotoDAO;
 import src.Model.GameFoto;
+
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.ArrayList;
@@ -53,5 +55,14 @@ public class GameFotoController {
             e.printStackTrace();
         }
         return new ArrayList<>();
+    }
+    public ResultSet fetchGameListingsWithPhotos() {
+        try {
+            return gameFotoDAO.gameComFotos();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
