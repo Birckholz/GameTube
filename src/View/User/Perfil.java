@@ -2,6 +2,7 @@ package src.View.User;
 
 import org.json.JSONObject;
 import src.MyCustomException;
+import src.Session.Session;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,11 +11,11 @@ import java.awt.event.ActionListener;
 
 public class Perfil extends JFrame {
 
-    private JSONObject session;
+    private Session session;
     private ImageIcon imageIcon;
-    public Perfil(JSONObject session) {
+    public Perfil(Session session) {
 
-        if (!session.has("name")) {
+        if (session == null) {
             JOptionPane optionPane = new JOptionPane("Por favor realize login", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION);
 
             JButton customButton = new JButton("Fechar");
@@ -36,7 +37,7 @@ public class Perfil extends JFrame {
         }
 
         try {
-            if (session.has("name")) {
+            if (session != null) {
                 setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 setSize(1000, 700);
                 getContentPane().setBackground(Color.DARK_GRAY);
@@ -87,7 +88,7 @@ public class Perfil extends JFrame {
                 gbc.anchor = GridBagConstraints.PAGE_START;
 
                 JLabel nomeLabel = new JLabel();
-                nomeLabel.setText(session.getString("name"));
+                nomeLabel.setText(session.getUserAtual().getName());
                 nomeLabel.setForeground(Color.WHITE);
                 nomeLabel.setHorizontalAlignment(JLabel.CENTER);
                 panel.add(nomeLabel, gbc);
@@ -149,7 +150,7 @@ public class Perfil extends JFrame {
     }
 
     public static void main(String[] args) {
-        JSONObject a = new JSONObject();
+        Session a = new Session();
         Perfil p = new Perfil(a);
     }
 }

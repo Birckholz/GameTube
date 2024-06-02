@@ -8,6 +8,26 @@ import java.sql.SQLException;
 
 public class UsuarioDAO {
 
+    public int validateUser(String email, String password) {
+        String query = "SELECT id FROM users WHERE email = ? AND password = ?";
+
+        try (Connection connection = Conexao.getConexao();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, email);
+            statement.setString(2, password);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt("id");
+                } else {
+                    return -1;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
     public void insertUsuario(Usuario user) throws SQLException {
         String query = "INSERT INTO Usuario (name, email, password, username, mementoId, profilePic) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = Conexao.getConexao();

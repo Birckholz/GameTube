@@ -6,6 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import src.Model.Game;
 import src.MyCustomException;
+import src.Session.Session;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,13 +19,13 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class Loja extends JFrame {
-    private JSONObject session;
+    private Session session;
     private JPanel gamePanelContainer;
 
-    public Loja(JSONObject session) {
+    public Loja(Session session) {
         this.session = session;
 
-        if (!session.has("name")) {
+        if (session == null) {
             JOptionPane optionPane = new JOptionPane("Por favor realize login", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION);
 
             JButton customButton = new JButton("Fechar");
@@ -46,7 +47,7 @@ public class Loja extends JFrame {
         }
 
         try {
-            if (session.has("name")) {
+            if (session != null) {
                 setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 setSize(1000, 700);
                 getContentPane().setBackground(Color.DARK_GRAY);

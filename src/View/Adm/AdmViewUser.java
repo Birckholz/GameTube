@@ -3,6 +3,7 @@ package src.View.Adm;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import src.MyCustomException;
+import src.Session.Session;
 
 import javax.swing.*;
 import javax.swing.table.*;
@@ -16,13 +17,13 @@ import java.util.Vector;
 
 public class AdmViewUser extends JFrame {
 
-    private JSONObject session;
+    private Session session;
     private JTable table;
     private DefaultTableModel tableModel;
 
-    public AdmViewUser(JSONObject session) {
+    public AdmViewUser(Session session) {
         this.session = session;
-        if (!session.has("name")) {
+        if (session == null) {
             JOptionPane optionPane = new JOptionPane("Por favor realize login", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION);
 
             JButton customButton = new JButton("Fechar");
@@ -44,7 +45,7 @@ public class AdmViewUser extends JFrame {
         }
 
         try {
-            if (session.has("name")) {
+            if (session != null) {
                 setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 setSize(1000, 700);
                 getContentPane().setBackground(Color.DARK_GRAY);
@@ -269,8 +270,8 @@ public class AdmViewUser extends JFrame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                JSONObject session = new JSONObject();
-                session.put("name", "admin");
+                Session session = new Session();
+
                 new AdmViewUser(session);
             }
         });

@@ -3,6 +3,8 @@ package src.View.User;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import src.Controller.UsuarioController;
+import src.Session.Session;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,12 +17,14 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class Biblioteca extends JFrame {
-    private JSONObject session;
+    private Session session;
     private JPanel gamePanelContainer;
+    private UsuarioController userController;
+    public Biblioteca(Session session) {
 
-    public Biblioteca(JSONObject session) {
-        this.session = profileEditGUI.findUser(session);
-        if (!session.has("name")) {
+        userController = new UsuarioController();
+        this.session = session;
+        if (session == null) {
             JOptionPane optionPane = new JOptionPane("Por favor realize login", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION);
 
             JButton customButton = new JButton("Fechar");

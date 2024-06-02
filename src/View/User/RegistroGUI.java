@@ -3,6 +3,7 @@ package src.View.User;
 
 import javax.swing.JTextField;
 
+import src.Controller.UsuarioController;
 import src.Factory.UserFactory;
 import src.Factory.UsuarioFactory;
 import src.Model.UserBase;
@@ -20,8 +21,10 @@ public class RegistroGUI extends JFrame {
     private JTextField emailField;
     private JTextField nicknameField;
     private JPasswordField passwordField;
+    private UsuarioController userController;
 
     private RegistroGUI() {
+        userController = new UsuarioController();
         setTitle("Registro");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -124,7 +127,8 @@ public class RegistroGUI extends JFrame {
                 UserFactory Factory = new UsuarioFactory();
                 UserBase temp1 = Factory.createUser(nameField.getText(), emailField.getText(), passwordField.getText(), nicknameField.getText());
                 Usuario temp = (Usuario) temp1 ;
-                temp.registrarUsuario(temp);
+                userController.insertUsuario(temp);
+//                temp.registrarUsuario(temp);
                 LoginGUI loginGUI = new LoginGUI();
                 loginGUI.setVisible(true);
                 dispose();

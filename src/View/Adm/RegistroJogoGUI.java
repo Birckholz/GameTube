@@ -1,9 +1,9 @@
-package src.View.User;
+package src.View.Adm;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import src.Model.Game;
-import src.View.Adm.PerfilAdm;
+import src.Session.Session;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,7 +26,7 @@ public class RegistroJogoGUI extends JFrame {
     private JTextField imageField;
     private String selectedFilePath;
 
-    public RegistroJogoGUI(JSONObject session) {
+    public RegistroJogoGUI(Session session) {
         setTitle("Registrar Jogo");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 

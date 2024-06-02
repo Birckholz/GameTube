@@ -10,6 +10,27 @@ import java.util.List;
 
 public class AdmDAO {
 
+
+    public int validateUser(String email, String password) {
+        String query = "SELECT id FROM administarador WHERE email = ? AND password = ?";
+
+        try (Connection connection = Conexao.getConexao();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, email);
+            statement.setString(2, password);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt("id");
+                } else {
+                    return -1;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
     public void addAdm(Adm adm) throws SQLException {
         String query = "INSERT INTO ADM (admin, name, email, senha, username) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = Conexao.getConexao();

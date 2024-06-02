@@ -2,7 +2,7 @@ package src.View.Adm;
 
  import org.json.JSONObject;
  import src.MyCustomException;
- import src.View.User.RegistroJogoGUI;
+ import src.Session.Session;
  import src.View.User.profileEditGUI;
 
  import javax.swing.*;
@@ -14,8 +14,8 @@ import java.awt.event.ActionListener;
 
         private JSONObject session;
 
-        public PerfilAdm(JSONObject session) {
-            if (!session.has("name")) {
+        public PerfilAdm(Session session) {
+            if (session == null) {
                 JOptionPane optionPane = new JOptionPane("Por favor realize login", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION);
 
                 JButton customButton = new JButton("Fechar");
@@ -37,7 +37,7 @@ import java.awt.event.ActionListener;
             }
 
             try {
-                if (session.has("name")) {
+                if (session != null) {
                     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                     setSize(1000, 700);
                     getContentPane().setBackground(Color.DARK_GRAY);
@@ -65,7 +65,7 @@ import java.awt.event.ActionListener;
                     gbc.anchor = GridBagConstraints.PAGE_START;
 
                     JLabel nomeLabel = new JLabel();
-                    nomeLabel.setText(session.getString("name"));
+                    nomeLabel.setText(session.getAdmAtual().getName());
                     nomeLabel.setForeground(Color.WHITE);
                     nomeLabel.setHorizontalAlignment(JLabel.CENTER);
                     panel.add(nomeLabel, gbc);

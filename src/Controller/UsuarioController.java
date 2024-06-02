@@ -12,6 +12,10 @@ public class UsuarioController {
         this.usuarioDAO = new UsuarioDAO();
     }
 
+    public int doLogin(String email, String password) {
+        return usuarioDAO.validateUser(email, password);
+    }
+
     public void insertUsuario(Usuario usuario) {
         try {
             usuarioDAO.insertUsuario(usuario);

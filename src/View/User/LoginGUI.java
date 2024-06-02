@@ -2,7 +2,10 @@ package src.View.User;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import src.Controller.AdmController;
+import src.Controller.UsuarioController;
 import src.MyCustomException;
+import src.Session.Session;
 import src.View.Adm.PerfilAdm;
 
 import java.awt.*;
@@ -17,9 +20,16 @@ public class LoginGUI extends JFrame {
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JButton loginButton;
+    private Session session;
+    private final UsuarioController userController;
+    private final AdmController admController;
+
 
     public LoginGUI() {
         setTitle("Login");
+        userController = new UsuarioController();
+        session = new Session();
+        admController = new AdmController();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JPanel panel = new JPanel(new BorderLayout());
@@ -89,15 +99,26 @@ public class LoginGUI extends JFrame {
         loginButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                JSONObject Session = realizarLogin(usernameField.getText(), passwordField.getText());
+                int userId = userController.doLogin(usernameField.getText(), new String(passwordField.getPassword()));
+                int admId = 0;
+                if (userId == -1) {
+                    admId = admController.doLogin(usernameField.getText(), new String(passwordField.getPassword()));
+                    if (admId == -1) {
+                        JOptionPane.showMessageDialog(null, "Login Invalido.");
+                    } else {
+                        session.setAdmAtual(admController.findAdm(admId));
+                    }
+                } else {
+                    session.setUserAtual(userController.findUsuarioById(userId));
+                }
                 try{
-                    if (Session != null) {
-                        if (Session.has("admin")){
-                            PerfilAdm perfilAdm = new PerfilAdm(Session);
+                    if (session != null) {
+                        if ( session.getAdmAtual() != null){
+                            PerfilAdm perfilAdm = new PerfilAdm(session);
                             perfilAdm.setVisible(true);
                             dispose();
                         } else {
-                            Perfil perfil = new Perfil(Session);
+                            Perfil perfil = new Perfil(session);
                             perfil.setVisible(true);
                             dispose();
                         }
@@ -121,29 +142,6 @@ public class LoginGUI extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
 
-    }
-    public static JSONObject realizarLogin(String identifier, String code) {
-        try {
-            String fileContent = new String(Files.readAllBytes(Paths.get("src/usuarios.json")));
-            JSONArray jsonArray;
-            jsonArray = new JSONArray(fileContent);
-            for (Object item : jsonArray) {
-                if (item instanceof JSONObject) {
-                    JSONObject jsonObject = (JSONObject) item;
-
-                    if (identifier.equals(jsonObject.getString("email")) || identifier.equals(jsonObject.getString("username"))) {
-                        if (jsonObject.getString("senha").equals(code)) {
-                            System.out.println("Logado");
-                            return jsonObject;
-                        }
-                    }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-
-        }
-        return null;
     }
 
     public static void main(String[] args) {

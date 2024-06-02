@@ -2,7 +2,11 @@ package src.Controller;
 
 import src.Model.Adm;
 import src.Model.DAO.AdmDAO;
+import src.Model.DAO.Conexao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -11,6 +15,10 @@ public class AdmController {
 
     public AdmController() {
         this.admDAO = new AdmDAO();
+    }
+
+    public int doLogin(String email, String password) {
+        return admDAO.validateUser(email, password);
     }
 
     public void addAdm(Adm adm) {
