@@ -14,44 +14,22 @@ public class GameController {
     }
 
     public void addGame(Game game) {
-        try {
-            gameDAO.addGame(game);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        gameDAO.addGame(game);
     }
 
     public void updateGame(Game game) {
-        try {
-            gameDAO.updateGame(game);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        gameDAO.updateGame(game);
     }
 
     public Game findGame(int id) {
-        try {
-            return gameDAO.findGame(id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return gameDAO.findGame(id);
     }
 
     public void deleteGame(int id) {
-        try {
-            gameDAO.deleteGame(id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        gameDAO.deleteGame(id);
     }
 
     public List<Game> findAllGames() {
-        try {
-            return gameDAO.findAllGames();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return gameDAO.findAllGames();
     }
 }

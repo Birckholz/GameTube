@@ -7,20 +7,25 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Perfil extends JFrame {
 
     private Session session;
     private ImageIcon imageIcon;
+    private ResultSet resultSet;
+
     public Perfil(Session session) {
+        this.session = session;
+        this.resultSet = fetchUserProfile();
 
         if (session == null) {
             JOptionPane optionPane = new JOptionPane("Por favor realize login", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION);
 
             JButton customButton = new JButton("Fechar");
 
-            optionPane.setOptions(new Object[] { customButton });
+            optionPane.setOptions(new Object[]{customButton});
 
             JDialog dialog = optionPane.createDialog("No Session");
 
@@ -147,6 +152,12 @@ public class Perfil extends JFrame {
             System.out.println(e.getMessage());
             descartar();
         }
+    }
+
+    // Método adicionado para buscar o perfil do usuário no banco de dados
+    private ResultSet fetchUserProfile() {
+        // Lógica para buscar o perfil do usuário no banco de dados e retornar um ResultSet
+        return null; // Retorno temporário; substitua pela lógica de busca no banco de
     }
 
     public void descartar() {

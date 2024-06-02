@@ -2,9 +2,14 @@ package src.Controller;
 
 import src.Model.DAO.AdmFotoDAO;
 import src.Model.AdmFoto;
+
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class AdmFotoController {
+    private static final Logger logger = Logger.getLogger(AdmFotoController.class.getName());
+
     private AdmFotoDAO admFotoDAO;
 
     public AdmFotoController() {
@@ -15,7 +20,7 @@ public class AdmFotoController {
         try {
             admFotoDAO.addAdmFoto(admFoto);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error adding administrator photo", e);
         }
     }
 
@@ -23,7 +28,7 @@ public class AdmFotoController {
         try {
             admFotoDAO.updateAdmFoto(admFoto);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error updating administrator photo", e);
         }
     }
 
@@ -31,17 +36,16 @@ public class AdmFotoController {
         try {
             return admFotoDAO.findAdmFotoByAdmId(idAdm);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error finding administrator photo by ID", e);
+            return null;
         }
-        return null;
     }
 
     public void deleteAdmFoto(int idAdm) {
         try {
             admFotoDAO.deleteAdmFoto(idAdm);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error deleting administrator photo", e);
         }
     }
-
 }

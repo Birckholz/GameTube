@@ -1,9 +1,5 @@
 package src.View.User;
 
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import src.Controller.BibliotecaController;
 import src.Controller.GameFotoController;
 import src.Model.Game;
@@ -14,16 +10,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Loja extends JFrame {
+    private static final Logger LOGGER = Logger.getLogger(Loja.class.getName());
+
     private Session session;
     private JPanel gamePanelContainer;
     private GameFotoController gameFotoController;
@@ -32,26 +26,10 @@ public class Loja extends JFrame {
     public Loja(Session session) {
         this.session = session;
         this.bibliotecaController = new BibliotecaController();
-        this.gameFotoController =new GameFotoController();
+        this.gameFotoController = new GameFotoController();
         if (session == null) {
-            JOptionPane optionPane = new JOptionPane("Por favor realize login", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION);
-
-            JButton customButton = new JButton("Fechar");
-
-            optionPane.setOptions(new Object[]{customButton});
-
-            JDialog dialog = optionPane.createDialog("No Session");
-
-            customButton.addActionListener(e -> {
-                descartar();
-                dialog.dispose();
-            });
-
-            dialog.setModal(true);
-
-            dialog.setResizable(false);
-
-            dialog.setVisible(true);
+            JOptionPane.showMessageDialog(null, "Por favor, realize o login", "No Session", JOptionPane.INFORMATION_MESSAGE);
+            dispose();
         }
 
         try {
@@ -64,7 +42,6 @@ public class Loja extends JFrame {
 
                 JMenuBar barraMenu = new JMenuBar();
                 JMenu menuBiblioteca = new JMenu("Biblioteca");
-                JMenu menuLista = new JMenu("Lista de Desejos");
                 JMenu menuPerfil = new JMenu("Perfil");
 
                 JMenuItem verJogos = new JMenuItem("Ver Jogos");
@@ -82,12 +59,8 @@ public class Loja extends JFrame {
                     }
                 });
 
-
-
-
                 menuBiblioteca.add(verJogos);
                 menuPerfil.add(irPerfil);
-
 
                 barraMenu.add(menuBiblioteca);
                 barraMenu.add(menuPerfil);
@@ -114,12 +87,11 @@ public class Loja extends JFrame {
             }
 
         } catch (MyCustomException e) {
-            System.out.println(e.getMessage());
-            descartar();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            dispose();
         }
         readGameListingsFromDatabase();
     }
-
 
     private void readGameListingsFromDatabase() {
         try {
@@ -167,14 +139,11 @@ public class Loja extends JFrame {
                 pagarButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        List<Integer> bib = bibliotecaController.findGamesByUsuario(session.getUserAtual().getId());
-
-                        if (bib.contains(gameId)){
-                            showErrorPopup("Jogo Já Comprado", "Fechar");
-                            return;
+                        if (bibliotecaController.insertBiblioteca(gameId, session.getUserAtual().getId())) {
+                            System.out.println("Compra realizada com sucesso");
+                        } else {
+                            showErrorPopup("Jogo já comprado", "Fechar");
                         }
-                        bibliotecaController.insertBiblioteca(gameId, session.getUserAtual().getId());
-                            System.out.println("Compra Realizada com Sucesso");
                     }
                 });
 
@@ -185,46 +154,10 @@ public class Loja extends JFrame {
             getContentPane().repaint();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error reading game listings from database: ", e);
         }
     }
 
-    public void descartar() {
-        dispose();
-    }
-    public static boolean comprarGame(JSONObject session, Game game){
-        try {
-            String fileContent = new String(Files.readAllBytes(Paths.get("src/usuarios.json")));
-            JSONArray jsonArray;
-            jsonArray = new JSONArray(fileContent);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-
-                if (session.getString("name").equals(jsonObject.getString("name"))) {
-                    JSONArray currentBiblioteca = jsonObject.getJSONArray("biblioteca");
-                    if (currentBiblioteca.length() > 0){
-                        for (int j = 0; j < currentBiblioteca.length(); j++) {
-                            String element = currentBiblioteca.getString(j);
-                            if (element.equals(game.getName())) {
-                                return false;
-                            }
-                        }
-                    }
-
-                    currentBiblioteca.put(game.getName());
-                    jsonObject.put("biblioteca", currentBiblioteca);
-
-                    Files.write(Paths.get("src/usuarios.json"), jsonArray.toString().getBytes());
-
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-
-        }
-        return false;
-    }
     private void showErrorPopup(String message, String buttonText) {
         JOptionPane optionPane = new JOptionPane(message, JOptionPane.ERROR_MESSAGE, JOptionPane.DEFAULT_OPTION, null, new Object[]{buttonText});
         JDialog dialog = optionPane.createDialog(this, "Erro");

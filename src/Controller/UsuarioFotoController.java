@@ -14,44 +14,22 @@ public class UsuarioFotoController {
     }
 
     public void addUsuarioFoto(UsuarioFoto usuarioFoto) {
-        try {
-            usuarioFotoDAO.addUsuarioFoto(usuarioFoto);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        usuarioFotoDAO.addUsuarioFoto(usuarioFoto);
     }
 
     public void updateUsuarioFoto(UsuarioFoto usuarioFoto) {
-        try {
-            usuarioFotoDAO.updateUsuarioFoto(usuarioFoto);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        usuarioFotoDAO.updateUsuarioFoto(usuarioFoto);
     }
 
     public UsuarioFoto getUsuarioFotoByUsuarioId(int idUsuario) {
-        try {
-            return usuarioFotoDAO.findUsuarioFotoByUsuarioId(idUsuario);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return usuarioFotoDAO.findUsuarioFotoByUsuarioId(idUsuario);
     }
 
     public void deleteUsuarioFoto(int idUsuario) {
-        try {
-            usuarioFotoDAO.deleteUsuarioFoto(idUsuario);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        usuarioFotoDAO.deleteUsuarioFoto(idUsuario);
     }
 
     public List<UsuarioFoto> getAllUsuarioFotos() {
-        try {
-            return usuarioFotoDAO.findAllUsuarioFotos();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return usuarioFotoDAO.findAllUsuarioFotos();
     }
 }
