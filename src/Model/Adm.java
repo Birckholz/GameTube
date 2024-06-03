@@ -1,6 +1,5 @@
 package src.Model;
 
-
 public class Adm extends UserBase{
     private final boolean admin;
     private int id;

@@ -22,44 +22,22 @@ public class AdmController {
     }
 
     public void addAdm(Adm adm) {
-        try {
-            admDAO.addAdm(adm);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        admDAO.addAdm(adm);
     }
 
     public void updateAdm(Adm adm) {
-        try {
-            admDAO.updateAdm(adm);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        admDAO.updateAdm(adm);
     }
 
     public Adm findAdm(int id) {
-        try {
-            return admDAO.findAdm(id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return admDAO.findAdm(id);
     }
 
     public void deleteAdm(int id) {
-        try {
-            admDAO.deleteAdm(id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        admDAO.deleteAdm(id);
     }
 
     public List<Adm> findAllAdms() {
-        try {
-            return admDAO.findAllAdms();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return admDAO.findAllAdms();
     }
 }

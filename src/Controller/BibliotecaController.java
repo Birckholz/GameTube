@@ -8,29 +8,30 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class BibliotecaController {
     private BibliotecaDAO bibliotecaDAO;
+
+    private static final Logger LOGGER = Logger.getLogger(BibliotecaController.class.getName());
 
     public BibliotecaController() {
             bibliotecaDAO = new BibliotecaDAO();
     }
 
     public List<Integer> findGamesByUsuario(int idUsuario) {
-        try {
-            return bibliotecaDAO.findGamesByUsuario(idUsuario);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return bibliotecaDAO.findGamesByUsuario(idUsuario);
     }
 
-    public void insertBiblioteca(int idGame, int idUsuario) {
+    public boolean insertBiblioteca(int idGame, int idUsuario) {
+        Biblioteca biblioteca = new Biblioteca(idGame, idUsuario);
         try {
-            Biblioteca biblioteca = new Biblioteca(idGame, idUsuario);
             bibliotecaDAO.insertBiblioteca(biblioteca);
+            return true; // Indica que a inserção foi bem-sucedida
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error inserting into Biblioteca: ", e);
+            return false; // Indica que a inserção falhou
         }
     }
 }

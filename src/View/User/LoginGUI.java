@@ -1,6 +1,5 @@
 package src.View.User;
 
-
 import src.Controller.AdmController;
 import src.Controller.UsuarioController;
 import src.MyCustomException;
@@ -10,9 +9,6 @@ import src.View.Adm.PerfilAdm;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import javax.swing.*;
 
 public class LoginGUI extends JFrame {

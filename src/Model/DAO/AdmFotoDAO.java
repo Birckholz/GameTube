@@ -7,8 +7,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class AdmFotoDAO {
+
+    private static final Logger logger = Logger.getLogger(AdmFotoDAO.class.getName());
 
     public void addAdmFoto(AdmFoto admFoto) throws SQLException {
         String query = "INSERT INTO ADM_FOTO (ID_ADM, PICTURE) VALUES (?, ?)";
@@ -23,6 +27,9 @@ public class AdmFotoDAO {
                     admFoto.setId(generatedKeys.getInt(1));
                 }
             }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error adding AdmFoto", e);
+            throw e;
         }
     }
 
@@ -33,6 +40,9 @@ public class AdmFotoDAO {
             pstmt.setBytes(1, admFoto.getFoto());
             pstmt.setInt(2, admFoto.getIdAdm());
             pstmt.executeUpdate();
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error updating AdmFoto", e);
+            throw e;
         }
     }
 
@@ -50,6 +60,9 @@ public class AdmFotoDAO {
                     );
                 }
             }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error finding AdmFoto by AdmId", e);
+            throw e;
         }
         return null; // No photo found for the specified admin ID
     }
@@ -60,6 +73,9 @@ public class AdmFotoDAO {
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setInt(1, idAdm);
             pstmt.executeUpdate();
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error deleting AdmFoto", e);
+            throw e;
         }
     }
 
@@ -77,6 +93,9 @@ public class AdmFotoDAO {
                 );
                 admFotos.add(admFoto);
             }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error finding all AdmFotos", e);
+            throw e;
         }
         return admFotos;
     }

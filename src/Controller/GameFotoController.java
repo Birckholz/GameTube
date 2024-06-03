@@ -16,45 +16,23 @@ public class GameFotoController {
     }
 
     public void addGameFoto(GameFoto gameFoto) {
-        try {
-            gameFotoDAO.addGameFoto(gameFoto);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        gameFotoDAO.addGameFoto(gameFoto);
     }
 
     public void updateGameFoto(GameFoto gameFoto) {
-        try {
-            gameFotoDAO.updateGameFoto(gameFoto);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        gameFotoDAO.updateGameFoto(gameFoto);
     }
 
     public GameFoto getGameFotoByGameId(int idGame) {
-        try {
-            return gameFotoDAO.findGameFotoByGameId(idGame);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return gameFotoDAO.findGameFotoByGameId(idGame);
     }
 
     public void deleteGameFoto(int idGame) {
-        try {
-            gameFotoDAO.deleteGameFoto(idGame);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        gameFotoDAO.deleteGameFoto(idGame);
     }
 
     public List<GameFoto> getAllGameFotos() {
-        try {
-            return gameFotoDAO.findAllGameFotos();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return new ArrayList<>();
+        return gameFotoDAO.findAllGameFotos();
     }
     public ResultSet fetchGameListingsWithPhotos() {
         try {
