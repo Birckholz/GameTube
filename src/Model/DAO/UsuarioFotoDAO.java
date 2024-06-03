@@ -44,7 +44,6 @@ public class UsuarioFotoDAO {
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return new UsuarioFoto(
-                            rs.getInt("ID"),
                             rs.getInt("ID_USUARIO"),
                             rs.getBytes("PICTURE")
                     );
@@ -71,7 +70,6 @@ public class UsuarioFotoDAO {
              ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
                 UsuarioFoto usuarioFoto = new UsuarioFoto(
-                        rs.getInt("ID"),
                         rs.getInt("ID_USUARIO"),
                         rs.getBytes("PICTURE")
                 );

@@ -1,8 +1,6 @@
 package src.View.User;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+
 import src.Controller.GameFotoController;
 import src.Controller.UsuarioController;
 import src.Session.Session;

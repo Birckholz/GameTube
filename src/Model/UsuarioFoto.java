@@ -9,8 +9,7 @@ public class UsuarioFoto {
     public UsuarioFoto() {
     }
 
-    public UsuarioFoto(int id, int idUsuario, byte[] foto) {
-        this.id = id;
+    public UsuarioFoto(int idUsuario, byte[] foto) {
         this.idUsuario = idUsuario;
         this.foto = foto;
     }

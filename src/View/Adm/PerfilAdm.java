@@ -1,6 +1,5 @@
 package src.View.Adm;
 
- import org.json.JSONObject;
  import src.MyCustomException;
  import src.Session.Session;
  import src.View.User.profileEditGUI;
@@ -9,10 +8,11 @@ package src.View.Adm;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+ import java.sql.SQLException;
 
-    public class PerfilAdm extends JFrame {
+public class PerfilAdm extends JFrame {
 
-        private JSONObject session;
+        private Session session;
 
         public PerfilAdm(Session session) {
             if (session == null) {
@@ -75,7 +75,11 @@ import java.awt.event.ActionListener;
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             dispose();
-                            new profileEditGUI(session).setVisible(true);
+                            try {
+                                new profileEditGUI(session).setVisible(true);
+                            } catch (SQLException ex) {
+                                throw new RuntimeException(ex);
+                            }
                         }
                     });
 

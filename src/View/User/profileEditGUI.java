@@ -1,13 +1,13 @@
 package src.View.User;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import src.Controller.AdmController;
 import src.Controller.MementoController;
 import src.Controller.UsuarioController;
+import src.Controller.UsuarioFotoController;
 import src.Model.Adm;
 import src.Model.Memento;
 import src.Model.Usuario;
+import src.Model.UsuarioFoto;
 import src.MyCustomException;
 import src.Session.Session;
 import src.View.Adm.PerfilAdm;
@@ -25,6 +25,7 @@ import java.sql.SQLException;
 
 public class profileEditGUI extends JFrame {
 
+    private UsuarioFotoController userFotoController;
     private Session session;
     private JTextField nameField;
     private JTextField emailField;
@@ -40,6 +41,7 @@ public class profileEditGUI extends JFrame {
 
     public profileEditGUI(Session session) throws SQLException {
         this.session = session;
+        this.userFotoController = new UsuarioFotoController();
         this.userController = new UsuarioController();
         this.admController = new AdmController();
         this.mementoController = new MementoController();
@@ -84,6 +86,8 @@ public class profileEditGUI extends JFrame {
                         try {
                             saveProfileChanges();
                         } catch (SQLException ex) {
+                            ex.printStackTrace();
+                        } catch (IOException ex) {
                             ex.printStackTrace();
                         }
                     }
@@ -209,7 +213,7 @@ public class profileEditGUI extends JFrame {
         }
     }
 
-    public void saveProfileChanges() throws SQLException {
+    public void saveProfileChanges() throws SQLException, IOException {
         String profilePic = "";
         String name = nameField.getText();
         String email = emailField.getText();
@@ -224,6 +228,7 @@ public class profileEditGUI extends JFrame {
             session.getUserAtual().setUsername(username);
             userController.updateUsuario(session.getUserAtual());
             idUser = session.getUserAtual().getId();
+            userFotoController.updateUsuarioFoto(new UsuarioFoto(idUser, Files.readAllBytes(Paths.get(selectedFilePath))));
         } else {
             session.getAdmAtual().setName(name);
             session.getAdmAtual().setEmail(email);
@@ -284,43 +289,6 @@ public class profileEditGUI extends JFrame {
 
 
 
-    }
-
-
-    public static JSONObject findUser(JSONObject session) {
-        String username = session.getString("username");
-        String email = session.getString("email");
-        try {
-            String fileContent = new String(Files.readAllBytes(Paths.get("src/usuarios.json")));
-            JSONArray jsonArray;
-            jsonArray = new JSONArray(fileContent);
-            for (Object item : jsonArray) {
-                if (item instanceof JSONObject) {
-                    JSONObject jsonObject = (JSONObject) item;
-
-                    if (username.equals(jsonObject.getString("username")) || email.equals(jsonObject.getString("email"))) {
-                        return jsonObject;
-                    }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-
-        }
-        return null;
-    }
-
-
-    public static boolean checkGame(JSONObject session, String name){
-        JSONObject user = findUser(session);
-        JSONArray biblioteca = user.getJSONArray("biblioteca");
-        for (Object elemento : biblioteca) {
-            String nameGame = (String) elemento;
-            if (name.equals(nameGame)) {
-                return true;
-            }
-        }
-        return false;
     }
 
 

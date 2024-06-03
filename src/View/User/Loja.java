@@ -1,9 +1,7 @@
 package src.View.User;
 
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+
 import src.Controller.BibliotecaController;
 import src.Controller.GameFotoController;
 import src.Model.Game;
@@ -192,39 +190,7 @@ public class Loja extends JFrame {
     public void descartar() {
         dispose();
     }
-    public static boolean comprarGame(JSONObject session, Game game){
-        try {
-            String fileContent = new String(Files.readAllBytes(Paths.get("src/usuarios.json")));
-            JSONArray jsonArray;
-            jsonArray = new JSONArray(fileContent);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
 
-                if (session.getString("name").equals(jsonObject.getString("name"))) {
-                    JSONArray currentBiblioteca = jsonObject.getJSONArray("biblioteca");
-                    if (currentBiblioteca.length() > 0){
-                        for (int j = 0; j < currentBiblioteca.length(); j++) {
-                            String element = currentBiblioteca.getString(j);
-                            if (element.equals(game.getName())) {
-                                return false;
-                            }
-                        }
-                    }
-
-                    currentBiblioteca.put(game.getName());
-                    jsonObject.put("biblioteca", currentBiblioteca);
-
-                    Files.write(Paths.get("src/usuarios.json"), jsonArray.toString().getBytes());
-
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-
-        }
-        return false;
-    }
     private void showErrorPopup(String message, String buttonText) {
         JOptionPane optionPane = new JOptionPane(message, JOptionPane.ERROR_MESSAGE, JOptionPane.DEFAULT_OPTION, null, new Object[]{buttonText});
         JDialog dialog = optionPane.createDialog(this, "Erro");

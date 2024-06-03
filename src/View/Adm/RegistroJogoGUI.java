@@ -1,7 +1,5 @@
 package src.View.Adm;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import src.Model.Game;
 import src.Session.Session;
 

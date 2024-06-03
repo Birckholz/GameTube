@@ -1,7 +1,6 @@
 package src.View.User;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+
 import src.Controller.AdmController;
 import src.Controller.UsuarioController;
 import src.MyCustomException;

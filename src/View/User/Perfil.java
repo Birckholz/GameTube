@@ -1,19 +1,25 @@
 package src.View.User;
 
+import src.Controller.UsuarioFotoController;
 import src.MyCustomException;
 import src.Session.Session;
-
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.sql.SQLException;
 
 public class Perfil extends JFrame {
 
     private Session session;
+    private UsuarioFotoController userFotoController;
     private ImageIcon imageIcon;
     public Perfil(Session session) {
+        this.userFotoController = new UsuarioFotoController();
 
         if (session == null) {
             JOptionPane optionPane = new JOptionPane("Por favor realize login", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION);
@@ -52,9 +58,11 @@ public class Perfil extends JFrame {
                 gbc.insets = new Insets(10, 10, 0, 10);
                 gbc.anchor = GridBagConstraints.CENTER;
 
-                if (session.getString("imagePath").length() > 0) {
-                    ImageIcon originalIcon = new ImageIcon(session.getString("imagePath"));
-                    Image originalImage = originalIcon.getImage();
+                if (userFotoController.getUsuarioFotoByUsuarioId(session.getUserAtual().getId()) != null) {
+                    byte[] blob = userFotoController.getUsuarioFotoByUsuarioId(session.getUserAtual().getId()).getFoto();
+                    ByteArrayInputStream bis = new ByteArrayInputStream(blob);
+                    BufferedImage bufferedImage = ImageIO.read(bis);
+                    Image originalImage = bufferedImage.getScaledInstance(bufferedImage.getWidth(), bufferedImage.getHeight(), Image.SCALE_SMOOTH);
 
                     int maxWidth = 200;
                     int maxHeight = 200;
@@ -146,6 +154,8 @@ public class Perfil extends JFrame {
         } catch (MyCustomException e) {
             System.out.println(e.getMessage());
             descartar();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
