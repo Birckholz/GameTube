@@ -21,6 +21,7 @@ public class UsuarioController {
          usuarioDAO.insertUsuario(usuario);
     }
 
+
     public void updateUsuario(Usuario usuario) {
         usuarioDAO.updateUsuario(usuario);
     }
