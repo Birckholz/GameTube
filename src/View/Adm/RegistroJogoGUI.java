@@ -1,7 +1,11 @@
 package src.View.Adm;
 
+import src.Controller.GameController;
+import src.Controller.GameFotoController;
 import src.Model.Game;
+import src.Model.GameFoto;
 import src.Session.Session;
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,6 +22,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 public class RegistroJogoGUI extends JFrame {
+    private GameController gameController;
+    private GameFotoController gameFotoController;
     private JTextField nameField;
     private JTextField descricaoField;
     private JTextField priceField;
@@ -25,6 +31,8 @@ public class RegistroJogoGUI extends JFrame {
     private String selectedFilePath;
 
     public RegistroJogoGUI(Session session) {
+        this.gameController = new GameController();
+        this.gameFotoController = new GameFotoController();
         setTitle("Registrar Jogo");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -120,9 +128,8 @@ public class RegistroJogoGUI extends JFrame {
                     String destinationPath = "image/" + selectedFile.getName();
 
                     try {
-                        Files.copy(selectedFile.toPath(), Path.of(destinationPath), StandardCopyOption.REPLACE_EXISTING);
-                        Game temp = new Game(name, description, price, destinationPath);
-                        registrarJogo(temp);
+                        Game temp = new Game(name, description, price);
+                        registrarJogo(temp, selectedFile);
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
@@ -138,31 +145,11 @@ public class RegistroJogoGUI extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
     }
-        public static void registrarJogo(Game game) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("directory", game.getDirectory());
-            jsonObject.put("name", game.getName());
-            jsonObject.put("description", game.getDescricao());
-            jsonObject.put("aprice", game.getPrice());
 
-            String filePath = "src/games.json";
+    public void registrarJogo(Game game, File imagen) throws IOException {
 
-            try {
-                String fileContent = new String(Files.readAllBytes(Paths.get(filePath)));
-                JSONArray jsonArray;
-                jsonArray = new JSONArray(fileContent);
-                jsonArray.put(jsonObject);
-
-                FileWriter escrever = new FileWriter(filePath);
-
-                escrever.write(jsonArray.toString());
-
-                escrever.close();
-
-                System.out.println("Data written to the JSON file successfully.");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        }
+        byte[] blob = Files.readAllBytes(Paths.get(imagen.getPath()));
+        int idGame = this.gameController.addGame(game);
+        gameFotoController.addGameFoto(new GameFoto(idGame, blob));
+    }
 }

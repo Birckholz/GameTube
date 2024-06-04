@@ -1,9 +1,11 @@
 package src.View.Adm;
 
 
+import src.Controller.UsuarioController;
+import src.Model.Usuario;
 import src.MyCustomException;
 import src.Session.Session;
-
+import java.util.List;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
@@ -16,12 +18,14 @@ import java.util.Vector;
 
 public class AdmViewUser extends JFrame {
 
+    private UsuarioController usuarioController;
     private Session session;
     private JTable table;
     private DefaultTableModel tableModel;
 
     public AdmViewUser(Session session) {
         this.session = session;
+        this.usuarioController =new UsuarioController();
         if (session == null) {
             JOptionPane optionPane = new JOptionPane("Por favor realize login", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION);
 
@@ -109,63 +113,50 @@ public class AdmViewUser extends JFrame {
     }
 
     private void loadTableData() {
-        try {
-            String jsonFileContent = new String(Files.readAllBytes(Paths.get("src/usuarios.json")));
-            JSONArray jsonArray = new JSONArray(jsonFileContent);
+        List<Usuario> users = usuarioController.findAllUsers();
 
-            Vector<String> columnNames = new Vector<>();
-            columnNames.add("Name");
-            columnNames.add("Email");
-            columnNames.add("Username");
-            columnNames.add("Senha");
-            columnNames.add("Biblioteca");
-            columnNames.add("imagePath");
-            columnNames.add("MementoId");
-            columnNames.add("Deletar");
-            tableModel = new DefaultTableModel(columnNames, 0) {
-                @Override
-                public boolean isCellEditable(int row, int column) {
-                    return column == 7;
-                }
-            };
-
-            for (int i = 0; i < jsonArray.length(); i++) {
-                String imagePath = "";
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                String name = jsonObject.getString("name");
-                String email = jsonObject.getString("email");
-                String username = jsonObject.getString("username");
-                String senha = jsonObject.getString("senha");
-                JSONArray biblioteca = jsonObject.getJSONArray("biblioteca");
-                if (jsonObject.has("imagePath")) {
-                    imagePath = jsonObject.getString("imagePath");
-                } else {
-                    imagePath = "Nenhuma";
-                }
-                int mementoId = jsonObject.getInt("mementoId");
-                tableModel.addRow(new Object[]{name, email, username, senha, biblioteca, imagePath, mementoId, "Deletar"});
+        Vector<String> columnNames = new Vector<>();
+        columnNames.add("id");
+        columnNames.add("Name");
+        columnNames.add("Email");
+        columnNames.add("Username");
+        columnNames.add("MementoId");
+        columnNames.add("Deletar");
+        tableModel = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == 6;
             }
+        };
 
-            table.setModel(tableModel);
-
-            table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
-                public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                    Component cellComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                    cellComponent.setBackground(Color.DARK_GRAY);
-                    cellComponent.setForeground(Color.WHITE);
-                    return cellComponent;
-                }
-            });
-            JTableHeader header = table.getTableHeader();
-            header.setBackground(Color.DARK_GRAY);
-            header.setForeground(Color.WHITE);
-
-            JScrollPane scrollPane = (JScrollPane) table.getParent().getParent();
-            scrollPane.getViewport().setBackground(Color.DARK_GRAY);
-        } catch (IOException e) {
-            e.printStackTrace();
+        for (Usuario user : users) {
+            int id = user.getId();
+            String name = user.getName();
+            String email = user.getEmail();
+            String username = user.getUsername();
+            int mementoId = user.getMementoId();
+            tableModel.addRow(new Object[]{id, name, email, username, mementoId, "Deletar"});
         }
+
+        table.setModel(tableModel);
+
+        table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component cellComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                cellComponent.setBackground(Color.DARK_GRAY);
+                cellComponent.setForeground(Color.WHITE);
+                return cellComponent;
+            }
+        });
+
+        JTableHeader header = table.getTableHeader();
+        header.setBackground(Color.DARK_GRAY);
+        header.setForeground(Color.WHITE);
+
+        JScrollPane scrollPane = (JScrollPane) table.getParent().getParent();
+        scrollPane.getViewport().setBackground(Color.DARK_GRAY);
     }
+
 
     private void descartar() {
         new PerfilAdm(session);
@@ -222,40 +213,37 @@ public class AdmViewUser extends JFrame {
                 int confirm = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja deletar este usuário?", "Confirmar Deletar", JOptionPane.YES_NO_OPTION);
                 if (confirm == JOptionPane.YES_OPTION && selectedRow >= 0 && selectedRow < tableModel.getRowCount()) {
                     tableModel.removeRow(selectedRow);
-                    writeTableDataToJson();
+                    synchronizeTableWithData();
                 }
             }
                 clicked = false;
                 return new String(label);
             }
-        private void writeTableDataToJson() {
-            SwingUtilities.invokeLater(() -> {
-                JSONArray jsonArray = new JSONArray();
-                for (int i = 0; i < tableModel.getRowCount(); i++) {
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("name", tableModel.getValueAt(i, 0));
-                    jsonObject.put("email", tableModel.getValueAt(i, 1));
-                    jsonObject.put("username", tableModel.getValueAt(i, 2));
-                    jsonObject.put("senha", tableModel.getValueAt(i, 3));
-                    jsonObject.put("biblioteca", tableModel.getValueAt(i, 4));
-                    if (!tableModel.getValueAt(i, 5).equals("Nenhuma")) {
-                        jsonObject.put("imagePath", tableModel.getValueAt(i, 5));
-                    }
-                    jsonObject.put("mementoId", tableModel.getValueAt(i, 6));
-                    jsonArray.put(jsonObject);
-                }
 
+        private void synchronizeTableWithData() {
+            SwingUtilities.invokeLater(() -> {
                 try {
-                    Files.write(Paths.get("src/usuarios.json"), jsonArray.toString().getBytes());
-                } catch (IOException e) {
+                    List<Usuario> usersInDatabase = usuarioController.findAllUsers();
+                    for (Usuario user : usersInDatabase) {
+                        boolean found = false;
+                        for (int i = 0; i < tableModel.getRowCount(); i++) {
+                            int id = (int) tableModel.getValueAt(i, 1);
+                            if (user.getId() == id) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            usuarioController.removeUsuario(user.getId());
+                        }
+                    }
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
-                loadTableData();
-                TableColumn column = table.getColumn("Deletar");
-                column.setCellRenderer(new ButtonRenderer());
-                column.setCellEditor(new ButtonEditor(new JCheckBox()));
             });
         }
+
+
 
         public boolean stopCellEditing() {
             clicked = false;

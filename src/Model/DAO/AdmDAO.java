@@ -15,7 +15,7 @@ public class AdmDAO {
     private static final Logger logger = Logger.getLogger(AdmDAO.class.getName());
 
     public int validateUser(String email, String password) {
-        String query = "SELECT id FROM administarador WHERE email = ? AND password = ?";
+        String query = "SELECT id FROM adm WHERE email = ? AND senha = ?";
 
         try (Connection connection = Conexao.getConexao();
              PreparedStatement statement = connection.prepareStatement(query)) {
@@ -35,7 +35,7 @@ public class AdmDAO {
     }
 
     public void addAdm(Adm adm) {
-        String query = "INSERT INTO ADM (admin, name, email, senha, username) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO ADM (administrador, nome, email, senha, username) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = Conexao.getConexao();
              PreparedStatement pstmt = conn.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)) {
             pstmt.setBoolean(1, adm.isAdmin());
@@ -56,7 +56,7 @@ public class AdmDAO {
     }
 
     public void updateAdm(Adm adm) {
-        String query = "UPDATE ADM SET admin = ?, name = ?, email = ?, senha = ?, username = ? WHERE id = ?";
+        String query = "UPDATE ADM SET admin = ?, nome = ?, email = ?, senha = ?, username = ? WHERE id = ?";
         try (Connection conn = Conexao.getConexao();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setBoolean(1, adm.isAdmin());
@@ -80,7 +80,7 @@ public class AdmDAO {
                 if (rs.next()) {
                     return new Adm(
                             rs.getBoolean("admin"),
-                            rs.getString("name"),
+                            rs.getString("nome"),
                             rs.getString("email"),
                             rs.getString("senha"),
                             rs.getString("username")
@@ -113,7 +113,7 @@ public class AdmDAO {
             while (rs.next()) {
                 Adm adm = new Adm(
                         rs.getBoolean("admin"),
-                        rs.getString("name"),
+                        rs.getString("nome"),
                         rs.getString("email"),
                         rs.getString("senha"),
                         rs.getString("username")

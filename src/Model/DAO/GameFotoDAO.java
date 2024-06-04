@@ -53,7 +53,6 @@ public class GameFotoDAO {
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return new GameFoto(
-                            rs.getInt("ID"),
                             rs.getInt("ID_GAME"),
                             rs.getBytes("PICTURE")
                     );
@@ -84,7 +83,6 @@ public class GameFotoDAO {
              ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
                 GameFoto gameFoto = new GameFoto(
-                        rs.getInt("ID"),
                         rs.getInt("ID_GAME"),
                         rs.getBytes("PICTURE")
                 );

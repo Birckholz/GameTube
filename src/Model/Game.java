@@ -12,13 +12,11 @@ public class Game {
     private String name;
     private String descricao;
     private Double price;
-    private String directory;
             
-    public Game(String name, String descricao, Double preco, String directory) {
+    public Game(String name, String descricao, Double preco) {
         this.name = name;
         this.descricao = descricao;
         this.price = preco;
-        this.directory = directory;
     }
 
     public int getId() {
@@ -36,10 +34,6 @@ public class Game {
     public String getDescricao() { return descricao; }
 
     public void setDescricao(String descricao) { this.descricao = descricao; }
-
-    public String getDirectory() {
-        return directory;
-    }
 
     public Double getPrice() { return price; }
 

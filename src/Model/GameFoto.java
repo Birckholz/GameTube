@@ -8,8 +8,7 @@ public class GameFoto {
     public GameFoto() {
     }
 
-    public GameFoto(int id, int idGame, byte[] foto) {
-        this.id = id;
+    public GameFoto(int idGame, byte[] foto) {
         this.idGame = idGame;
         this.foto = foto;
     }

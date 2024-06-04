@@ -18,7 +18,7 @@ public class MementoDAO {
     }
 
     public int addMemento(Memento memento) {
-        String query = "INSERT INTO Memento (name, email, username, password, admin) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO Memento (nome, email, username, senha, admin) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, memento.getName());
             stmt.setString(2, memento.getEmail());
@@ -45,9 +45,9 @@ public class MementoDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     Memento tempMemento = new Memento(
-                            rs.getString("name"),
+                            rs.getString("nome"),
                             rs.getString("email"),
-                            rs.getString("password"),
+                            rs.getString("senha"),
                             rs.getBoolean("admin"),
                             rs.getString("username")
                     );
@@ -62,7 +62,7 @@ public class MementoDAO {
     }
 
     public void updateMemento(Memento memento) {
-        String query = "UPDATE Memento SET name = ?, email = ?, password = ?, admin = ? WHERE id = ?";
+        String query = "UPDATE Memento SET nome = ?, email = ?, senha = ?, admin = ? WHERE id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, memento.getName());
             stmt.setString(2, memento.getEmail());

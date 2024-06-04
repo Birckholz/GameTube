@@ -13,8 +13,8 @@ public class GameController {
         this.gameDAO = new GameDAO();
     }
 
-    public void addGame(Game game) {
-        gameDAO.addGame(game);
+    public int addGame(Game game) {
+        return gameDAO.addGame(game);
     }
 
     public void updateGame(Game game) {

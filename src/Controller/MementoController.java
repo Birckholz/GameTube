@@ -17,7 +17,7 @@ public class MementoController {
         this.userController = new UsuarioController();
     }
 
-    public void updateUser(String name, String email, String password, boolean admin, String username,int userID) throws SQLException {
+    public int updateUser(String name, String email, String password, boolean admin, String username,int userID) throws SQLException {
         int mementoID;
         boolean user;
         if (admin) {
@@ -35,9 +35,11 @@ public class MementoController {
             } else {
                 admController.findAdm(userID).setMementoId(newMementoId);
             }
+            return newMementoId;
         } else {
             mementoDAO.updateMemento(new Memento(name, email, password, admin, username));
         }
+        return 0;
     }
 
     public Memento restoreUser(int mementoId) throws SQLException {

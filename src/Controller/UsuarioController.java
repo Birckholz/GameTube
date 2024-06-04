@@ -4,6 +4,7 @@ import src.Model.Usuario;
 import src.Model.DAO.UsuarioDAO;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class UsuarioController {
     private UsuarioDAO usuarioDAO;
@@ -17,7 +18,7 @@ public class UsuarioController {
     }
 
     public void insertUsuario(Usuario usuario) {
-        usuarioDAO.insertUsuario(usuario);
+         usuarioDAO.insertUsuario(usuario);
     }
 
     public void updateUsuario(Usuario usuario) {
@@ -26,6 +27,10 @@ public class UsuarioController {
 
     public void removeUsuario(int id) {
         usuarioDAO.removeUsuario(id);
+    }
+
+    public List<Usuario> findAllUsers() {
+        return usuarioDAO.findAllUsuarios();
     }
 
     public Usuario findUsuarioById(int id) {

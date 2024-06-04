@@ -1,14 +1,17 @@
 package src.View.Adm;
 
 
+import src.Controller.GameController;
+import src.Model.Game;
 import src.MyCustomException;
 import src.Session.Session;
-
+import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,6 +22,7 @@ import java.util.Vector;
 
 public class AdmViewJogos extends JFrame {
 
+    private GameController gameController;
     private Session session;
     private JTable table;
     private DefaultTableModel tableModel;
@@ -26,6 +30,7 @@ public class AdmViewJogos extends JFrame {
 
     public AdmViewJogos(Session session) {
         this.session = session;
+        this.gameController = new GameController();
         if (session == null) {
             JOptionPane optionPane = new JOptionPane("Por favor realize login", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION);
 
@@ -120,14 +125,13 @@ public class AdmViewJogos extends JFrame {
 
     private void loadTableData() {
         try {
-            String jsonFileContent = new String(Files.readAllBytes(Paths.get("src/games.json")));
-            JSONArray jsonArray = new JSONArray(jsonFileContent);
+            List<Game> games = gameController.findAllGames();
 
             Vector<String> columnNames = new Vector<>();
+            columnNames.add("id");
             columnNames.add("Name");
             columnNames.add("Description");
             columnNames.add("APrice");
-            columnNames.add("Directory");
             columnNames.add("Deletar");
             tableModel = new DefaultTableModel(columnNames, 0) {
                 @Override
@@ -136,13 +140,12 @@ public class AdmViewJogos extends JFrame {
                 }
             };
 
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                String name = jsonObject.getString("name");
-                String description = jsonObject.getString("description");
-                double aprice = jsonObject.getDouble("aprice");
-                String directory = jsonObject.getString("directory");
-                tableModel.addRow(new Object[]{name, description, aprice, directory, "Deletar"});
+            for (Game game : games) {
+                int id = game.getId();
+                String name = game.getName();
+                String description = game.getDescricao();
+                double aprice = game.getPrice();
+                tableModel.addRow(new Object[]{id ,name, description, aprice, "Deletar"});
             }
 
             table.setModel(tableModel);
@@ -165,10 +168,11 @@ public class AdmViewJogos extends JFrame {
             scrollPane.getViewport().setBackground(Color.DARK_GRAY);
 
             panel.add(scrollPane, BorderLayout.CENTER);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
     private void descartar() {
         new PerfilAdm(session);
@@ -226,31 +230,38 @@ public class AdmViewJogos extends JFrame {
                 int confirm = JOptionPane.showConfirmDialog(null, "Tem certeza que deseja deletar este jogo?", "Confirmar Deletar", JOptionPane.YES_NO_OPTION);
                 if (confirm == JOptionPane.YES_OPTION && selectedRow >= 0 && selectedRow < tableModel.getRowCount()) {
                     tableModel.removeRow(selectedRow);
-                    writeTableDataToJson();
+                    synchronizeTableWithData();
                 }
             }
             clicked = false;
             return new String(label);
         }
 
-        private void writeTableDataToJson() {
+
+        private void synchronizeTableWithData() {
             SwingUtilities.invokeLater(() -> {
-                JSONArray jsonArray = new JSONArray();
-                for (int i = 0; i < tableModel.getRowCount(); i++) {
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("name", tableModel.getValueAt(i, 0));
-                    jsonObject.put("description", tableModel.getValueAt(i, 1));
-                    jsonObject.put("aprice", tableModel.getValueAt(i, 2));
-                    jsonObject.put("directory", tableModel.getValueAt(i, 3));
-                    jsonArray.put(jsonObject);
-                }
                 try {
-                    Files.write(Paths.get("src/games.json"), jsonArray.toString(2).getBytes());
-                } catch (IOException e) {
+                    List<Game> gamesInDatabase = gameController.findAllGames();
+                    for (int i = 0; i < tableModel.getRowCount(); i++) {
+                        int id = (int) tableModel.getValueAt(i, 1);
+                        boolean found = false;
+                        for (Game game : gamesInDatabase) {
+                            if (game.getId() == id) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            gameController.deleteGame(id);
+                        }
+                    }
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             });
         }
+
+
 
         public boolean stopCellEditing() {
             clicked = false;

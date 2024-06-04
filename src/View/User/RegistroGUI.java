@@ -3,6 +3,7 @@ package src.View.User;
 
 import javax.swing.JTextField;
 
+import src.Controller.MementoController;
 import src.Controller.UsuarioController;
 import src.Factory.UserFactory;
 import src.Factory.UsuarioFactory;
@@ -13,6 +14,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.SQLException;
 
 
 public class RegistroGUI extends JFrame {
@@ -22,8 +24,10 @@ public class RegistroGUI extends JFrame {
     private JTextField nicknameField;
     private JPasswordField passwordField;
     private UsuarioController userController;
+    private MementoController mementoController;
 
-    private RegistroGUI() {
+    private RegistroGUI() throws SQLException {
+        mementoController = new MementoController();
         userController = new UsuarioController();
         setTitle("Registro");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -128,6 +132,7 @@ public class RegistroGUI extends JFrame {
                 UserBase temp1 = Factory.createUser(nameField.getText(), emailField.getText(), passwordField.getText(), nicknameField.getText());
                 Usuario temp = (Usuario) temp1 ;
                 userController.insertUsuario(temp);
+
 //                temp.registrarUsuario(temp);
                 LoginGUI loginGUI = new LoginGUI();
                 loginGUI.setVisible(true);
@@ -145,7 +150,7 @@ public class RegistroGUI extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
     }
-    public static synchronized RegistroGUI getInstance() {
+    public static synchronized RegistroGUI getInstance() throws SQLException {
         if (instance == null) {
             instance = new RegistroGUI();
         }
