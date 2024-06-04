@@ -238,7 +238,6 @@ public class profileEditGUI extends JFrame {
             idUser = session.getAdmAtual().getId();
             isAdmin = true;
         }
-        mementoController.updateUser(name,email,senha,isAdmin,username,idUser);
     }
 
     public void undoChanges() throws SQLException {
@@ -259,7 +258,6 @@ public class profileEditGUI extends JFrame {
             emailAtual = session.getUserAtual().getEmail();
             senhaAtual = session.getUserAtual().getSenha();
             usernameAtual = session.getUserAtual().getUsername();
-            mementoId = session.getUserAtual().getMementoId();
             isAdmin = false;
             userID = session.getUserAtual().getId();
         } else {
@@ -267,25 +265,12 @@ public class profileEditGUI extends JFrame {
             emailAtual = session.getAdmAtual().getEmail();
             senhaAtual = session.getAdmAtual().getSenha();
             usernameAtual = session.getAdmAtual().getUsername();
-            mementoId = session.getAdmAtual().getMementoId();
             isAdmin = true;
             userID = session.getAdmAtual().getId();
         }
-        nameMemento = mementoController.restoreUser(mementoId).getName();
-        emailMemento = mementoController.restoreUser(mementoId).getEmail();
-        senhaMemento = mementoController.restoreUser(mementoId).getSenha();
-        usernameMemento= mementoController.restoreUser(mementoId).getUsername();
 
-        if (session.getAdmAtual() == null) {
-            Usuario temp = new Usuario(emailMemento, senhaMemento, nameMemento, usernameMemento);
-            temp.setId(session.getUserAtual().getId());
-            userController.updateUsuario(temp);
-        } else {
-            Adm temp = new Adm(true ,emailMemento, senhaMemento, nameMemento, usernameMemento);
-            temp.setId(session.getUserAtual().getId());
-            admController.updateAdm(temp);
-        }
-        mementoController.updateUser(nameAtual, emailAtual,senhaAtual, isAdmin, usernameAtual, userID);
+
+
 
 
 

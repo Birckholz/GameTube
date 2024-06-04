@@ -81,6 +81,17 @@ public class GameDAO {
         }
     }
 
+    public boolean doesUserHaveGame(int userId) {
+        String query = "SELECT ID_GAME FROM BIBLIOTECA WHERE id_user = ?";
+        try (Connection conn = Conexao.getConexao();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, userId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error deleting game", e);
+        }
+    }
+
     public List<Game> findAllGames() {
         String query = "SELECT * FROM GAME";
         List<Game> games = new ArrayList<>();

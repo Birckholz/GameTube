@@ -17,8 +17,8 @@ public class UsuarioController {
         return usuarioDAO.validateUser(email, password);
     }
 
-    public void insertUsuario(Usuario usuario) {
-         usuarioDAO.insertUsuario(usuario);
+    public int insertUsuario(Usuario usuario) {
+         return usuarioDAO.insertUsuario(usuario);
     }
 
 

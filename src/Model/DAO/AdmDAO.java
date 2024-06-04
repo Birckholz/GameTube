@@ -79,7 +79,7 @@ public class AdmDAO {
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return new Adm(
-                            rs.getBoolean("admin"),
+                            rs.getBoolean("administrador"),
                             rs.getString("nome"),
                             rs.getString("email"),
                             rs.getString("senha"),

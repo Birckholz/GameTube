@@ -17,7 +17,7 @@ public class UsuarioDAO {
     private static final Logger logger = Logger.getLogger(UsuarioDAO.class.getName());
 
     public int validateUser(String email, String password) {
-        String query = "SELECT id FROM users WHERE email = ? AND senha = ?";
+        String query = "SELECT id FROM USUARIO WHERE email = ? AND senha = ?";
         try (Connection connection = Conexao.getConexao();
              PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, email);
@@ -35,19 +35,25 @@ public class UsuarioDAO {
         }
     }
 
-    public void insertUsuario(Usuario user) {
+    public int insertUsuario(Usuario user) {
         String query = "INSERT INTO Usuario (nome, email, senha, username) VALUES (?, ?, ?, ?)";
         try (Connection conn = Conexao.getConexao();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
+             PreparedStatement pstmt = conn.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, user.getName());
             pstmt.setString(2, user.getEmail());
             pstmt.setString(3, user.getPassword());
             pstmt.setString(4, user.getUsername());
             pstmt.executeUpdate();
+            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    user.setId(generatedKeys.getInt(1));
+                }
+            }
 
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Error inserting user", e);
         }
+        return user.getId();
     }
 
     public void updateUsuario(Usuario user) {
@@ -58,7 +64,7 @@ public class UsuarioDAO {
             pstmt.setString(2, user.getEmail());
             pstmt.setString(3, user.getPassword());
             pstmt.setString(4, user.getUsername());
-            pstmt.setInt(6, user.getId());
+            pstmt.setInt(5, user.getId());
             pstmt.executeUpdate();
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Error updating user", e);
@@ -87,10 +93,8 @@ public class UsuarioDAO {
                     String email = rs.getString("email");
                     String password = rs.getString("senha");
                     String username = rs.getString("username");
-                    int mementoId = rs.getInt("memento_id");
                     Usuario user = new Usuario(email, password, name, username);
                     user.setId(id);
-                    user.setMementoId(mementoId);
                     return user;
                 }
             }

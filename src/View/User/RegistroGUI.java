@@ -1,19 +1,28 @@
 package src.View.User;
 
 
+import javax.imageio.ImageIO;
 import javax.swing.JTextField;
 
 import src.Controller.MementoController;
 import src.Controller.UsuarioController;
+import src.Controller.UsuarioFotoController;
 import src.Factory.UserFactory;
 import src.Factory.UsuarioFactory;
 import src.Model.UserBase;
 import src.Model.Usuario;
+import src.Model.UsuarioFoto;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 
 
@@ -24,11 +33,11 @@ public class RegistroGUI extends JFrame {
     private JTextField nicknameField;
     private JPasswordField passwordField;
     private UsuarioController userController;
-    private MementoController mementoController;
+    private UsuarioFotoController userFotoController;
 
     private RegistroGUI() throws SQLException {
-        mementoController = new MementoController();
         userController = new UsuarioController();
+        userFotoController = new UsuarioFotoController();
         setTitle("Registro");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -131,7 +140,13 @@ public class RegistroGUI extends JFrame {
                 UserFactory Factory = new UsuarioFactory();
                 UserBase temp1 = Factory.createUser(nameField.getText(), emailField.getText(), passwordField.getText(), nicknameField.getText());
                 Usuario temp = (Usuario) temp1 ;
-                userController.insertUsuario(temp);
+                int userID = userController.insertUsuario(temp);
+
+                try {
+                    userFotoController.addUsuarioFoto(new UsuarioFoto(userID, Files.readAllBytes(Paths.get("image/img_2.png"))));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
 
 //                temp.registrarUsuario(temp);
                 LoginGUI loginGUI = new LoginGUI();
