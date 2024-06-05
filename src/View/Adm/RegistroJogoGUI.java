@@ -4,7 +4,7 @@ import src.Controller.GameController;
 import src.Controller.GameFotoController;
 import src.Model.Game;
 import src.Model.GameFoto;
-import src.Session.Session;
+import src.Session.SessionCustom;
 
 
 import javax.swing.*;
@@ -14,12 +14,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 
 public class RegistroJogoGUI extends JFrame {
     private GameController gameController;
@@ -30,7 +27,7 @@ public class RegistroJogoGUI extends JFrame {
     private JTextField imageField;
     private String selectedFilePath;
 
-    public RegistroJogoGUI(Session session) {
+    public RegistroJogoGUI(SessionCustom sessionCustom) {
         this.gameController = new GameController();
         this.gameFotoController = new GameFotoController();
         setTitle("Registrar Jogo");
@@ -111,7 +108,7 @@ public class RegistroJogoGUI extends JFrame {
         goBackButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                PerfilAdm perfilAdmGUI = new PerfilAdm(session);
+                PerfilAdm perfilAdmGUI = new PerfilAdm(sessionCustom);
                 RegistroJogoGUI.this.dispose();
             }
         });

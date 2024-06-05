@@ -5,31 +5,28 @@ import src.Controller.UsuarioController;
 import src.Controller.UsuarioFotoController;
 import src.Model.Usuario;
 import src.MyCustomException;
-import src.Session.Session;
+import src.Session.SessionCustom;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Vector;
 
 public class AdmViewUser extends JFrame {
 
     private UsuarioFotoController usuarioFotoController;
     private UsuarioController usuarioController;
-    private Session session;
+    private SessionCustom sessionCustom;
     private JTable table;
     private DefaultTableModel tableModel;
 
-    public AdmViewUser(Session session) {
-        this.session = session;
+    public AdmViewUser(SessionCustom sessionCustom) {
+        this.sessionCustom = sessionCustom;
         this.usuarioFotoController = new UsuarioFotoController();
         this.usuarioController =new UsuarioController();
-        if (session == null) {
+        if (sessionCustom == null) {
             JOptionPane optionPane = new JOptionPane("Por favor realize login", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION);
 
             JButton customButton = new JButton("Fechar");
@@ -51,7 +48,7 @@ public class AdmViewUser extends JFrame {
         }
 
         try {
-            if (session != null) {
+            if (sessionCustom != null) {
                 setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 setSize(1000, 700);
                 getContentPane().setBackground(Color.DARK_GRAY);
@@ -64,7 +61,7 @@ public class AdmViewUser extends JFrame {
                 JMenuItem verPerfilMenuItem = new JMenuItem("Ver Perfil");
                 verPerfilMenuItem.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        new PerfilAdm(session).setVisible(true);
+                        new PerfilAdm(sessionCustom).setVisible(true);
                         dispose();
                     }
                 });
@@ -73,7 +70,7 @@ public class AdmViewUser extends JFrame {
                 JMenuItem verjogosMenuItem = new JMenuItem("Ver Jogos");
                 verjogosMenuItem.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        new AdmViewJogos(session).setVisible(true);
+                        new AdmViewJogos(sessionCustom).setVisible(true);
                         dispose();
                     }
                 });
@@ -160,7 +157,7 @@ public class AdmViewUser extends JFrame {
 
 
     private void descartar() {
-        new PerfilAdm(session);
+        new PerfilAdm(sessionCustom);
         dispose();
     }
 
@@ -263,9 +260,9 @@ public class AdmViewUser extends JFrame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                Session session = new Session();
+                SessionCustom sessionCustom = new SessionCustom();
 
-                new AdmViewUser(session);
+                new AdmViewUser(sessionCustom);
             }
         });
     }

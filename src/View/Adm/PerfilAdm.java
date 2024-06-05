@@ -1,7 +1,7 @@
 package src.View.Adm;
 
  import src.MyCustomException;
- import src.Session.Session;
+ import src.Session.SessionCustom;
  import src.View.User.profileEditGUI;
 
  import javax.swing.*;
@@ -12,10 +12,10 @@ import java.awt.event.ActionListener;
 
 public class PerfilAdm extends JFrame {
 
-        private Session session;
+        private SessionCustom sessionCustom;
 
-        public PerfilAdm(Session session) {
-            if (session == null) {
+        public PerfilAdm(SessionCustom sessionCustom) {
+            if (sessionCustom == null) {
                 JOptionPane optionPane = new JOptionPane("Por favor realize login", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION);
 
                 JButton customButton = new JButton("Fechar");
@@ -37,7 +37,7 @@ public class PerfilAdm extends JFrame {
             }
 
             try {
-                if (session != null) {
+                if (sessionCustom != null) {
                     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                     setSize(1000, 700);
                     getContentPane().setBackground(Color.DARK_GRAY);
@@ -65,7 +65,7 @@ public class PerfilAdm extends JFrame {
                     gbc.anchor = GridBagConstraints.PAGE_START;
 
                     JLabel nomeLabel = new JLabel();
-                    nomeLabel.setText(session.getAdmAtual().getName());
+                    nomeLabel.setText(sessionCustom.getAdmAtual().getName());
                     nomeLabel.setForeground(Color.WHITE);
                     nomeLabel.setHorizontalAlignment(JLabel.CENTER);
                     panel.add(nomeLabel, gbc);
@@ -76,7 +76,7 @@ public class PerfilAdm extends JFrame {
                         public void actionPerformed(ActionEvent e) {
                             dispose();
                             try {
-                                new profileEditGUI(session).setVisible(true);
+                                new profileEditGUI(sessionCustom).setVisible(true);
                             } catch (SQLException ex) {
                                 throw new RuntimeException(ex);
                             }
@@ -90,7 +90,7 @@ public class PerfilAdm extends JFrame {
                     JMenuItem verJogos = new JMenuItem("Ver Jogos");
                     verJogos.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
-                            new AdmViewJogos(session).setVisible(true);
+                            new AdmViewJogos(sessionCustom).setVisible(true);
                             dispose();
                         }
                     });
@@ -98,7 +98,7 @@ public class PerfilAdm extends JFrame {
                     cadastrarJogo.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            new RegistroJogoGUI(session).setVisible(true);
+                            new RegistroJogoGUI(sessionCustom).setVisible(true);
                             dispose();
                         }
                     });
@@ -106,7 +106,7 @@ public class PerfilAdm extends JFrame {
                     JMenuItem verUsuarios = new JMenuItem("Ver Usuários");
                     verUsuarios.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
-                            new AdmViewUser(session).setVisible(true);
+                            new AdmViewUser(sessionCustom).setVisible(true);
                             dispose();
                         }
                     });

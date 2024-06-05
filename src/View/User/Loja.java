@@ -4,9 +4,8 @@ package src.View.User;
 
 import src.Controller.BibliotecaController;
 import src.Controller.GameFotoController;
-import src.Model.Game;
 import src.MyCustomException;
-import src.Session.Session;
+import src.Session.SessionCustom;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,22 +19,22 @@ import java.util.logging.Logger;
 public class Loja extends JFrame {
     private static final Logger LOGGER = Logger.getLogger(Loja.class.getName());
 
-    private Session session;
+    private SessionCustom sessionCustom;
     private JPanel gamePanelContainer;
     private GameFotoController gameFotoController;
     private BibliotecaController bibliotecaController;
 
-    public Loja(Session session) {
-        this.session = session;
+    public Loja(SessionCustom sessionCustom) {
+        this.sessionCustom = sessionCustom;
         this.bibliotecaController = new BibliotecaController();
         this.gameFotoController = new GameFotoController();
-        if (session == null) {
+        if (sessionCustom == null) {
             JOptionPane.showMessageDialog(null, "Por favor, realize o login", "No Session", JOptionPane.INFORMATION_MESSAGE);
             dispose();
         }
 
         try {
-            if (session != null) {
+            if (sessionCustom != null) {
                 setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 setSize(1000, 700);
                 getContentPane().setBackground(Color.DARK_GRAY);
@@ -50,14 +49,14 @@ public class Loja extends JFrame {
                 verJogos.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         dispose();
-                        new BibliotecaView(session).setVisible(true);
+                        new BibliotecaView(sessionCustom).setVisible(true);
                     }
                 });
                 JMenuItem irPerfil = new JMenuItem("Ir para o Perfil");
                 irPerfil.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         dispose();
-                        new Perfil(session).setVisible(true);
+                        new Perfil(sessionCustom).setVisible(true);
                     }
                 });
 
@@ -142,8 +141,8 @@ public class Loja extends JFrame {
                     @Override
                     public void actionPerformed(ActionEvent e) {
 
-                        if (bibliotecaController.checkUserGames(gameId, session.getUserAtual().getId())) {
-                            bibliotecaController.insertBiblioteca(gameId, session.getUserAtual().getId());
+                        if (bibliotecaController.checkUserGames(gameId, sessionCustom.getUserAtual().getId())) {
+                            bibliotecaController.insertBiblioteca(gameId, sessionCustom.getUserAtual().getId());
                             System.out.println("Compra realizada com sucesso");
                         } else {
                             showErrorPopup("Jogo já comprado", "Fechar");

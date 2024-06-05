@@ -2,32 +2,22 @@ package src.View.User;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.cognitoidp.model.AuthenticationResultType;
-import com.amazonaws.services.cognitoidp.model.SignUpResult;
 import src.Controller.AdmController;
 import src.Controller.UsuarioController;
-import src.Factory.UserFactory;
-import src.Factory.UsuarioFactory;
-import src.Model.UserBase;
-import src.Model.Usuario;
-import src.Model.UsuarioFoto;
-import src.MyCustomException;
-import src.Session.Session;
+import src.Session.SessionCustom;
 import src.View.Adm.PerfilAdm;
 import src.config.CognitoService;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import javax.swing.*;
 
 public class LoginGUI extends JFrame {
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JButton loginButton;
-    private Session session;
+    private SessionCustom sessionCustom;
     private final UsuarioController userController;
     private final AdmController admController;
     private CognitoService cognitoService;
@@ -36,7 +26,7 @@ public class LoginGUI extends JFrame {
         setTitle("Login");
         this.cognitoService = cognitoService;
         userController = new UsuarioController();
-        session = new Session();
+        sessionCustom = new SessionCustom();
         admController = new AdmController();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -115,13 +105,13 @@ public class LoginGUI extends JFrame {
                         if (admId == -1) {
                             JOptionPane.showMessageDialog(null, "Login Invalido.");
                         } else {
-                            session.setAdmAtual(admController.findAdm(admId));
+                            sessionCustom.setAdmAtual(admController.findAdm(admId));
                         }
                     } else {
-                        session.setUserAtual(userController.findUsuarioById(userId));
+                        sessionCustom.setUserAtual(userController.findUsuarioById(userId));
                     }
-                    if (session.getAdmAtual() != null) {
-                        PerfilAdm perfilAdm = new PerfilAdm(session);
+                    if (sessionCustom.getAdmAtual() != null) {
+                        PerfilAdm perfilAdm = new PerfilAdm(sessionCustom);
                         perfilAdm.setVisible(true);
                         dispose();
                     } else {
@@ -129,13 +119,13 @@ public class LoginGUI extends JFrame {
                         if (authResult != null) {
 
                             JOptionPane.showMessageDialog(LoginGUI.this, "Sucesso", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
-                            if (session != null) {
-                                if (session.getAdmAtual() != null) {
-                                    PerfilAdm perfilAdm = new PerfilAdm(session);
+                            if (sessionCustom != null) {
+                                if (sessionCustom.getAdmAtual() != null) {
+                                    PerfilAdm perfilAdm = new PerfilAdm(sessionCustom);
                                     perfilAdm.setVisible(true);
                                     dispose();
                                 } else {
-                                    Perfil perfil = new Perfil(session);
+                                    Perfil perfil = new Perfil(sessionCustom);
                                     perfil.setVisible(true);
                                     dispose();
                                 }

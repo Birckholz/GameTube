@@ -1,7 +1,6 @@
 package src.View;
 
 import com.amazonaws.services.cognitoidp.model.ConfirmSignUpResult;
-import src.Session.Session;
 import src.View.User.LoginGUI;
 import src.config.CognitoService;
 

@@ -3,7 +3,7 @@ package src.Session;
 import src.Model.Adm;
 import src.Model.Usuario;
 
-public class Session {
+public class SessionCustom {
     private static Usuario userAtual;
     private static Adm     admAtual;
 

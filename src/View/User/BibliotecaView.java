@@ -3,15 +3,12 @@ package src.View.User;
 
 import src.Controller.GameFotoController;
 import src.Controller.UsuarioController;
-import src.Session.Session;
+import src.Session.SessionCustom;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -20,18 +17,18 @@ import java.util.logging.Logger;
 public class BibliotecaView extends JFrame {
     private static final Logger logger = Logger.getLogger(BibliotecaView.class.getName());
 
-    private Session session;
+    private SessionCustom sessionCustom;
     private JPanel gamePanelContainer;
     private UsuarioController userController;
     private GameFotoController gameFotoController;
 
-    public BibliotecaView(Session session) {
+    public BibliotecaView(SessionCustom sessionCustom) {
         gameFotoController = new GameFotoController();
         userController = new UsuarioController();
-        this.session = session;
+        this.sessionCustom = sessionCustom;
 
         try {
-            if (session == null) {
+            if (sessionCustom == null) {
                 showSessionErrorDialog();
             } else {
                 initializeUI();
@@ -76,14 +73,14 @@ public class BibliotecaView extends JFrame {
         irPerfil.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                new Perfil(session).setVisible(true);
+                new Perfil(sessionCustom).setVisible(true);
             }
         });
         JMenuItem verLoja = new JMenuItem("Ver Loja");
         verLoja.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 dispose();
-                new Loja(session).setVisible(true);
+                new Loja(sessionCustom).setVisible(true);
             }
         });
 

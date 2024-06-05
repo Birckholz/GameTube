@@ -4,12 +4,9 @@ import src.Controller.AdmController;
 import src.Controller.MementoController;
 import src.Controller.UsuarioController;
 import src.Controller.UsuarioFotoController;
-import src.Model.Adm;
-import src.Model.Memento;
-import src.Model.Usuario;
 import src.Model.UsuarioFoto;
 import src.MyCustomException;
-import src.Session.Session;
+import src.Session.SessionCustom;
 import src.View.Adm.PerfilAdm;
 
 import javax.swing.*;
@@ -19,14 +16,13 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 
 public class profileEditGUI extends JFrame {
 
     private UsuarioFotoController userFotoController;
-    private Session session;
+    private SessionCustom sessionCustom;
     private JTextField nameField;
     private JTextField emailField;
     private JTextField senhaField;
@@ -39,13 +35,13 @@ public class profileEditGUI extends JFrame {
     private AdmController admController;
     private MementoController mementoController;
 
-    public profileEditGUI(Session session) throws SQLException {
-        this.session = session;
+    public profileEditGUI(SessionCustom sessionCustom) throws SQLException {
+        this.sessionCustom = sessionCustom;
         this.userFotoController = new UsuarioFotoController();
         this.userController = new UsuarioController();
         this.admController = new AdmController();
         this.mementoController = new MementoController();
-        if (session == null) {
+        if (sessionCustom == null) {
             JOptionPane.showMessageDialog(null, "Por favor realize login", "No Session", JOptionPane.INFORMATION_MESSAGE);
             dispose();
             return;
@@ -53,7 +49,7 @@ public class profileEditGUI extends JFrame {
 
 
         try {
-            if (session != null) {
+            if (sessionCustom != null) {
                 nameField = new JTextField(20);
                 emailField = new JTextField(20);
                 senhaField = new JTextField(20);
@@ -113,12 +109,12 @@ public class profileEditGUI extends JFrame {
                 JButton goBackButton = new JButton("Go Back");
                 goBackButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        if (session.getAdmAtual() != null) {
-                            PerfilAdm perfilAdm = new PerfilAdm(session);
+                        if (sessionCustom.getAdmAtual() != null) {
+                            PerfilAdm perfilAdm = new PerfilAdm(sessionCustom);
                             perfilAdm.setVisible(true);
                             dispose();
                         } else {
-                            Perfil perfil = new Perfil(session);
+                            Perfil perfil = new Perfil(sessionCustom);
                             perfil.setVisible(true);
                             dispose();
                         }
@@ -197,16 +193,16 @@ public class profileEditGUI extends JFrame {
 
                 setLocationRelativeTo(null);
                 setVisible(true);
-                if(session.getAdmAtual() != null) {
-                    nameField.setText(session.getAdmAtual().getName());
-                    senhaField.setText(session.getAdmAtual().getSenha());
-                    usernameField.setText(session.getAdmAtual().getUsername());
-                    emailField.setText(session.getAdmAtual().getEmail());
+                if(sessionCustom.getAdmAtual() != null) {
+                    nameField.setText(sessionCustom.getAdmAtual().getName());
+                    senhaField.setText(sessionCustom.getAdmAtual().getSenha());
+                    usernameField.setText(sessionCustom.getAdmAtual().getUsername());
+                    emailField.setText(sessionCustom.getAdmAtual().getEmail());
                 }else {
-                    nameField.setText(session.getUserAtual().getName());
-                    senhaField.setText(session.getUserAtual().getSenha());
-                    usernameField.setText(session.getUserAtual().getUsername());
-                    emailField.setText(session.getUserAtual().getEmail());
+                    nameField.setText(sessionCustom.getUserAtual().getName());
+                    senhaField.setText(sessionCustom.getUserAtual().getSenha());
+                    usernameField.setText(sessionCustom.getUserAtual().getUsername());
+                    emailField.setText(sessionCustom.getUserAtual().getEmail());
                 }
             } else {
                 throw new MyCustomException("Session undefined");
@@ -226,21 +222,21 @@ public class profileEditGUI extends JFrame {
         String username = usernameField.getText();
         int idUser;
         boolean isAdmin = false;
-        if (session.getAdmAtual() == null) {
-            session.getUserAtual().setName(name);
-            session.getUserAtual().setEmail(email);
-            session.getUserAtual().setPassword(senha);
-            session.getUserAtual().setUsername(username);
-            userController.updateUsuario(session.getUserAtual());
-            idUser = session.getUserAtual().getId();
+        if (sessionCustom.getAdmAtual() == null) {
+            sessionCustom.getUserAtual().setName(name);
+            sessionCustom.getUserAtual().setEmail(email);
+            sessionCustom.getUserAtual().setPassword(senha);
+            sessionCustom.getUserAtual().setUsername(username);
+            userController.updateUsuario(sessionCustom.getUserAtual());
+            idUser = sessionCustom.getUserAtual().getId();
             userFotoController.updateUsuarioFoto(new UsuarioFoto(idUser, Files.readAllBytes(Paths.get(selectedFilePath))));
         } else {
-            session.getAdmAtual().setName(name);
-            session.getAdmAtual().setEmail(email);
-            session.getAdmAtual().setSenha(senha);
-            session.getAdmAtual().setUsername(username);
-            admController.updateAdm(session.getAdmAtual());
-            idUser = session.getAdmAtual().getId();
+            sessionCustom.getAdmAtual().setName(name);
+            sessionCustom.getAdmAtual().setEmail(email);
+            sessionCustom.getAdmAtual().setSenha(senha);
+            sessionCustom.getAdmAtual().setUsername(username);
+            admController.updateAdm(sessionCustom.getAdmAtual());
+            idUser = sessionCustom.getAdmAtual().getId();
             isAdmin = true;
         }
     }
@@ -258,20 +254,20 @@ public class profileEditGUI extends JFrame {
         String emailMemento;
         String senhaMemento;
         String usernameMemento;
-        if (session.getAdmAtual() == null) {
-            nameAtual = session.getUserAtual().getName();
-            emailAtual = session.getUserAtual().getEmail();
-            senhaAtual = session.getUserAtual().getSenha();
-            usernameAtual = session.getUserAtual().getUsername();
+        if (sessionCustom.getAdmAtual() == null) {
+            nameAtual = sessionCustom.getUserAtual().getName();
+            emailAtual = sessionCustom.getUserAtual().getEmail();
+            senhaAtual = sessionCustom.getUserAtual().getSenha();
+            usernameAtual = sessionCustom.getUserAtual().getUsername();
             isAdmin = false;
-            userID = session.getUserAtual().getId();
+            userID = sessionCustom.getUserAtual().getId();
         } else {
-            nameAtual = session.getAdmAtual().getName();
-            emailAtual = session.getAdmAtual().getEmail();
-            senhaAtual = session.getAdmAtual().getSenha();
-            usernameAtual = session.getAdmAtual().getUsername();
+            nameAtual = sessionCustom.getAdmAtual().getName();
+            emailAtual = sessionCustom.getAdmAtual().getEmail();
+            senhaAtual = sessionCustom.getAdmAtual().getSenha();
+            usernameAtual = sessionCustom.getAdmAtual().getUsername();
             isAdmin = true;
-            userID = session.getAdmAtual().getId();
+            userID = sessionCustom.getAdmAtual().getId();
         }
 
 
@@ -283,7 +279,7 @@ public class profileEditGUI extends JFrame {
 
 
     public static void main(String[] args) throws SQLException {
-        Session session = new Session();
-        new profileEditGUI(session);
+        SessionCustom sessionCustom = new SessionCustom();
+        new profileEditGUI(sessionCustom);
     }
 }

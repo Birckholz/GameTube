@@ -2,7 +2,7 @@ package src.View.User;
 
 import src.Controller.UsuarioFotoController;
 import src.MyCustomException;
-import src.Session.Session;
+import src.Session.SessionCustom;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -16,17 +16,17 @@ import java.sql.SQLException;
 
 public class Perfil extends JFrame {
 
-    private Session session;
+    private SessionCustom sessionCustom;
     private UsuarioFotoController userFotoController;
     private ImageIcon imageIcon;
     private ResultSet resultSet;
 
-    public Perfil(Session session) {
+    public Perfil(SessionCustom sessionCustom) {
         this.userFotoController = new UsuarioFotoController();
-        this.session = session;
+        this.sessionCustom = sessionCustom;
         this.resultSet = fetchUserProfile();
 
-        if (session == null) {
+        if (sessionCustom == null) {
             JOptionPane optionPane = new JOptionPane("Por favor realize login", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION);
 
             JButton customButton = new JButton("Fechar");
@@ -48,7 +48,7 @@ public class Perfil extends JFrame {
         }
 
         try {
-            if (session != null) {
+            if (sessionCustom != null) {
                 setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 setSize(1000, 700);
                 getContentPane().setBackground(Color.DARK_GRAY);
@@ -63,8 +63,8 @@ public class Perfil extends JFrame {
                 gbc.insets = new Insets(10, 10, 0, 10);
                 gbc.anchor = GridBagConstraints.CENTER;
 
-                if (userFotoController.getUsuarioFotoByUsuarioId(session.getUserAtual().getId()) != null) {
-                    byte[] blob = userFotoController.getUsuarioFotoByUsuarioId(session.getUserAtual().getId()).getFoto();
+                if (userFotoController.getUsuarioFotoByUsuarioId(sessionCustom.getUserAtual().getId()) != null) {
+                    byte[] blob = userFotoController.getUsuarioFotoByUsuarioId(sessionCustom.getUserAtual().getId()).getFoto();
                     ByteArrayInputStream bis = new ByteArrayInputStream(blob);
                     BufferedImage bufferedImage = ImageIO.read(bis);
                     Image originalImage = bufferedImage.getScaledInstance(bufferedImage.getWidth(), bufferedImage.getHeight(), Image.SCALE_SMOOTH);
@@ -101,7 +101,7 @@ public class Perfil extends JFrame {
                 gbc.anchor = GridBagConstraints.PAGE_START;
 
                 JLabel nomeLabel = new JLabel();
-                nomeLabel.setText(session.getUserAtual().getName());
+                nomeLabel.setText(sessionCustom.getUserAtual().getName());
                 nomeLabel.setForeground(Color.WHITE);
                 nomeLabel.setHorizontalAlignment(JLabel.CENTER);
                 panel.add(nomeLabel, gbc);
@@ -113,7 +113,7 @@ public class Perfil extends JFrame {
                     public void actionPerformed(ActionEvent e) {
                         dispose();
                         try {
-                            new profileEditGUI(session).setVisible(true);
+                            new profileEditGUI(sessionCustom).setVisible(true);
                         } catch (SQLException ex) {
                             ex.printStackTrace();
                         }
@@ -129,7 +129,7 @@ public class Perfil extends JFrame {
                 verJogos.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         dispose();
-                        new BibliotecaView(session).setVisible(true);
+                        new BibliotecaView(sessionCustom).setVisible(true);
                     }
                 });
 
@@ -137,7 +137,7 @@ public class Perfil extends JFrame {
                 verLoja.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         dispose();
-                        new Loja(session).setVisible(true);
+                        new Loja(sessionCustom).setVisible(true);
                     }
                 });
 
@@ -175,7 +175,7 @@ public class Perfil extends JFrame {
     }
 
     public static void main(String[] args) {
-        Session a = new Session();
+        SessionCustom a = new SessionCustom();
         Perfil p = new Perfil(a);
     }
 }
