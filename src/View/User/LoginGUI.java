@@ -1,14 +1,26 @@
 package src.View.User;
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.services.cognitoidp.model.AuthenticationResultType;
+import com.amazonaws.services.cognitoidp.model.SignUpResult;
 import src.Controller.AdmController;
 import src.Controller.UsuarioController;
+import src.Factory.UserFactory;
+import src.Factory.UsuarioFactory;
+import src.Model.UserBase;
+import src.Model.Usuario;
+import src.Model.UsuarioFoto;
 import src.MyCustomException;
 import src.Session.Session;
 import src.View.Adm.PerfilAdm;
+import src.config.CognitoService;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import javax.swing.*;
 
 public class LoginGUI extends JFrame {
@@ -18,10 +30,11 @@ public class LoginGUI extends JFrame {
     private Session session;
     private final UsuarioController userController;
     private final AdmController admController;
+    private CognitoService cognitoService;
 
-
-    public LoginGUI() {
+    public LoginGUI(CognitoService cognitoService) {
         setTitle("Login");
+        this.cognitoService = cognitoService;
         userController = new UsuarioController();
         session = new Session();
         admController = new AdmController();
@@ -94,37 +107,51 @@ public class LoginGUI extends JFrame {
         loginButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                int userId = userController.doLogin(usernameField.getText(), new String(passwordField.getPassword()));
-                int admId = 0;
-                if (userId == -1) {
-                    admId = admController.doLogin(usernameField.getText(), new String(passwordField.getPassword()));
-                    if (admId == -1) {
-                        JOptionPane.showMessageDialog(null, "Login Invalido.");
-                    } else {
-                        session.setAdmAtual(admController.findAdm(admId));
-                    }
-                } else {
-                    session.setUserAtual(userController.findUsuarioById(userId));
-                }
-                try{
-                    if (session != null) {
-                        if ( session.getAdmAtual() != null){
-                            PerfilAdm perfilAdm = new PerfilAdm(session);
-                            perfilAdm.setVisible(true);
-                            dispose();
+                try {
+                    int userId = userController.doLogin(usernameField.getText(), new String(passwordField.getPassword()));
+                    int admId = 0;
+                    if (userId == -1) {
+                        admId = admController.doLogin(usernameField.getText(), new String(passwordField.getPassword()));
+                        if (admId == -1) {
+                            JOptionPane.showMessageDialog(null, "Login Invalido.");
                         } else {
-                            Perfil perfil = new Perfil(session);
-                            perfil.setVisible(true);
-                            dispose();
+                            session.setAdmAtual(admController.findAdm(admId));
                         }
                     } else {
-                        throw new MyCustomException("Login Invalido");
+                        session.setUserAtual(userController.findUsuarioById(userId));
+                    }
+                    if (session.getAdmAtual() != null) {
+                        PerfilAdm perfilAdm = new PerfilAdm(session);
+                        perfilAdm.setVisible(true);
+                        dispose();
+                    } else {
+                        AuthenticationResultType authResult = cognitoService.authenticate(usernameField.getText(), new String(passwordField.getPassword()));
+                        if (authResult != null) {
+
+                            JOptionPane.showMessageDialog(LoginGUI.this, "Sucesso", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                            if (session != null) {
+                                if (session.getAdmAtual() != null) {
+                                    PerfilAdm perfilAdm = new PerfilAdm(session);
+                                    perfilAdm.setVisible(true);
+                                    dispose();
+                                } else {
+                                    Perfil perfil = new Perfil(session);
+                                    perfil.setVisible(true);
+                                    dispose();
+                                }
+                            } else {
+                                JOptionPane.showMessageDialog(null, "Login inválido.", "Erro", JOptionPane.ERROR_MESSAGE);
+                            }
+
+                        }
+                    }
+                    }catch(AmazonServiceException ex){
+                        JOptionPane.showMessageDialog(null, "Erro de autenticação: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                        ex.printStackTrace();
+                    }
+
                 }
 
-                } catch (MyCustomException s) {
-                    System.out.println(s.getMessage());
-                }
-            }
         });
 
         panel.add(centerPanel, BorderLayout.CENTER);
@@ -140,7 +167,7 @@ public class LoginGUI extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new LoginGUI());
+//        SwingUtilities.invokeLater(() -> new LoginGUI());
     }
 }
 

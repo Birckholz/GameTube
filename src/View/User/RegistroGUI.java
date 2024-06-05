@@ -4,6 +4,9 @@ package src.View.User;
 import javax.imageio.ImageIO;
 import javax.swing.JTextField;
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.services.cognitoidentity.model.AmazonCognitoIdentityException;
+import com.amazonaws.services.cognitoidp.model.SignUpResult;
 import src.Controller.MementoController;
 import src.Controller.UsuarioController;
 import src.Controller.UsuarioFotoController;
@@ -12,6 +15,8 @@ import src.Factory.UsuarioFactory;
 import src.Model.UserBase;
 import src.Model.Usuario;
 import src.Model.UsuarioFoto;
+import src.View.ConfirmaSignUp;
+import src.config.CognitoService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,8 +39,10 @@ public class RegistroGUI extends JFrame {
     private JPasswordField passwordField;
     private UsuarioController userController;
     private UsuarioFotoController userFotoController;
+    private CognitoService cognitoService;
 
     private RegistroGUI() throws SQLException {
+//      cola aqui a coisa da amazon
         userController = new UsuarioController();
         userFotoController = new UsuarioFotoController();
         setTitle("Registro");
@@ -127,7 +134,7 @@ public class RegistroGUI extends JFrame {
         loginLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                LoginGUI loginGUI = new LoginGUI();
+                LoginGUI loginGUI = new LoginGUI(cognitoService);
                 loginGUI.setVisible(true);
                 dispose();
 
@@ -137,20 +144,34 @@ public class RegistroGUI extends JFrame {
         registroButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                UserFactory Factory = new UsuarioFactory();
-                UserBase temp1 = Factory.createUser(nameField.getText(), emailField.getText(), passwordField.getText(), nicknameField.getText());
-                Usuario temp = (Usuario) temp1 ;
-                int userID = userController.insertUsuario(temp);
 
                 try {
-                    userFotoController.addUsuarioFoto(new UsuarioFoto(userID, Files.readAllBytes(Paths.get("image/img_2.png"))));
-                } catch (IOException ex) {
+                    SignUpResult signUpResult = cognitoService.registerUser(nicknameField.getText(), passwordField.getText(), emailField.getText());
+                    if (signUpResult.getUserConfirmed()) {
+
+                        JOptionPane.showMessageDialog(RegistroGUI.this, "Registrado", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                        ConfirmaSignUp confirmaSignUp = new ConfirmaSignUp(cognitoService);
+                        confirmaSignUp.setVisible(true);
+                    } else {
+                        JOptionPane.showMessageDialog(RegistroGUI.this, "Confirme sua conta no seu email.", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                    }
+
+                    UserFactory Factory = new UsuarioFactory();
+                    UserBase temp1 = Factory.createUser(nameField.getText(), emailField.getText(), passwordField.getText(), nicknameField.getText());
+                    Usuario temp = (Usuario) temp1;
+                    int userID = userController.insertUsuario(temp);
+
+                    try {
+                        userFotoController.addUsuarioFoto(new UsuarioFoto(userID, Files.readAllBytes(Paths.get("image/img_2.png"))));
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }catch (AmazonServiceException ex) {
+                    JOptionPane.showMessageDialog(RegistroGUI.this, "Erro realizando registro: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     ex.printStackTrace();
                 }
 
 //                temp.registrarUsuario(temp);
-                LoginGUI loginGUI = new LoginGUI();
-                loginGUI.setVisible(true);
                 dispose();
             }
         });
