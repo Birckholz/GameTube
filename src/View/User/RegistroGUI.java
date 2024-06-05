@@ -1,13 +1,10 @@
 package src.View.User;
 
 
-import javax.imageio.ImageIO;
 import javax.swing.JTextField;
 
 import com.amazonaws.AmazonServiceException;
-import com.amazonaws.services.cognitoidentity.model.AmazonCognitoIdentityException;
 import com.amazonaws.services.cognitoidp.model.SignUpResult;
-import src.Controller.MementoController;
 import src.Controller.UsuarioController;
 import src.Controller.UsuarioFotoController;
 import src.Factory.UserFactory;
@@ -22,13 +19,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class RegistroGUI extends JFrame {
@@ -40,9 +36,10 @@ public class RegistroGUI extends JFrame {
     private UsuarioController userController;
     private UsuarioFotoController userFotoController;
     private CognitoService cognitoService;
+    private static final Logger logger = Logger.getLogger(RegistroGUI.class.getName());
 
     private RegistroGUI() throws SQLException {
-//      cola aqui a coisa da amazon
+        // aws aqui
         userController = new UsuarioController();
         userFotoController = new UsuarioFotoController();
         setTitle("Registro");
@@ -154,6 +151,8 @@ public class RegistroGUI extends JFrame {
                         confirmaSignUp.setVisible(true);
                     } else {
                         JOptionPane.showMessageDialog(RegistroGUI.this, "Confirme sua conta no seu email.", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                        ConfirmaSignUp confirmaSignUp = new ConfirmaSignUp(cognitoService);
+                        confirmaSignUp.setVisible(true);
                     }
 
                     UserFactory Factory = new UsuarioFactory();
@@ -164,11 +163,11 @@ public class RegistroGUI extends JFrame {
                     try {
                         userFotoController.addUsuarioFoto(new UsuarioFoto(userID, Files.readAllBytes(Paths.get("image/img_2.png"))));
                     } catch (IOException ex) {
-                        ex.printStackTrace();
+                        logger.log(Level.SEVERE, "Error on register", ex);
                     }
                 }catch (AmazonServiceException ex) {
                     JOptionPane.showMessageDialog(RegistroGUI.this, "Erro realizando registro: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                    ex.printStackTrace();
+                    logger.log(Level.SEVERE, "Error on register", ex);
                 }
 
 //                temp.registrarUsuario(temp);

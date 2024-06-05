@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 public class Conexao {
     private static final String url = "jdbc:mysql://localhost:3306/gametube";
     private static final String user = "root";
-    private static final String senha = "PUC@1234";
+    private static final String senha = "54321";
     private static Connection conexao = null;
     private static final Logger logger = Logger.getLogger(Conexao.class.getName());
 

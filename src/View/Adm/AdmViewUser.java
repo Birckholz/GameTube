@@ -228,7 +228,7 @@ public class AdmViewUser extends JFrame {
                     }
                     for (Usuario user : usersInDatabase) {
                         boolean found = false;
-                        for (int i = 0; i < tableModel.getRowCount(); i++) {
+                        for (int i = 1; i < tableModel.getRowCount(); i++) {
                             int id = (int) tableModel.getValueAt(i, 1);
                             if (user.getId() == id) {
                                 found = true;

@@ -116,7 +116,6 @@ public class UsuarioDAO {
                 rs.getString("nome"),
                 rs.getString("username")
                 );
-                user.setMementoId(rs.getInt("memento_id"));
                 user.setId(rs.getInt("id"));
                 users.add(user);
             }

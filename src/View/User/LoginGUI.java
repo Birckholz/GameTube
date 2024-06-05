@@ -4,6 +4,7 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.cognitoidp.model.AuthenticationResultType;
 import src.Controller.AdmController;
 import src.Controller.UsuarioController;
+import src.Model.DAO.UsuarioDAO;
 import src.Session.SessionCustom;
 import src.View.Adm.PerfilAdm;
 import src.config.CognitoService;
@@ -11,6 +12,8 @@ import src.config.CognitoService;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 
 public class LoginGUI extends JFrame {
@@ -21,6 +24,7 @@ public class LoginGUI extends JFrame {
     private final UsuarioController userController;
     private final AdmController admController;
     private CognitoService cognitoService;
+    private static final Logger logger = Logger.getLogger(LoginGUI.class.getName());
 
     public LoginGUI(CognitoService cognitoService) {
         setTitle("Login");
@@ -63,7 +67,7 @@ public class LoginGUI extends JFrame {
 
         JPanel usernamePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
-        JLabel usernameLabel = new JLabel("Username:");
+        JLabel usernameLabel = new JLabel("Email:");
         usernameField = new JTextField(20);
 
         usernamePanel.add(usernameLabel);
@@ -137,7 +141,7 @@ public class LoginGUI extends JFrame {
                     }
                     }catch(AmazonServiceException ex){
                         JOptionPane.showMessageDialog(null, "Erro de autenticação: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-                        ex.printStackTrace();
+                        logger.log(Level.SEVERE, "Error on login", ex);
                     }
 
                 }

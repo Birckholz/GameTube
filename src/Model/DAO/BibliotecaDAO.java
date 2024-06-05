@@ -35,7 +35,7 @@ public class BibliotecaDAO {
 
     public List<Integer> doesUserHaveGame(int userId) {
         List<Integer> idGameList = new ArrayList<>();
-        String query = "SELECT ID_GAME FROM BIBLIOTECA WHERE id_user = ?";
+        String query = "SELECT ID_GAME FROM BIBLIOTECA WHERE id_usuario = ?";
         try (Connection conn = Conexao.getConexao();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setInt(1, userId);
@@ -61,5 +61,31 @@ public class BibliotecaDAO {
             preparedStatement.executeUpdate();
 
         }
+    }
+
+    public ResultSet pegarGamesUsuario(int id_user) throws SQLException {
+        String query = "SELECT GAME.ID, GAME.NOME, GAME.DESCRICAO, GAME.PRECO, GAME_FOTO.PICTURE " +
+                "FROM GAME " +
+                "INNER JOIN GAME_FOTO ON GAME.ID = GAME_FOTO.ID_GAME " +
+                "INNER JOIN BIBLIOTECA ON GAME.ID = BIBLIOTECA.ID_GAME " +
+                "INNER JOIN USUARIO ON USUARIO.ID = BIBLIOTECA.ID_USUARIO " +
+                "WHERE USUARIO.ID = ?";
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet resultSet = null;
+
+        try {
+            conn = Conexao.getConexao();
+            pstmt = conn.prepareStatement(query);
+            pstmt.setInt(1, id_user);
+            System.out.println(resultSet);
+            resultSet = pstmt.executeQuery();
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error finding games with photos", e);
+            throw e;
+        }
+
+        return resultSet;
     }
 }

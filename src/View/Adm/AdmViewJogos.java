@@ -246,7 +246,7 @@ public class AdmViewJogos extends JFrame {
                         gameFotoController.deleteGameFoto(gamesInDatabase.get(0).getId());
                         gameController.deleteGame(gamesInDatabase.get(0).getId());
                     }
-                    for (int i = 0; i < tableModel.getRowCount(); i++) {
+                    for (int i = 1; i < tableModel.getRowCount(); i++) {
                         int id = (int) tableModel.getValueAt(i, 1);
                         boolean found = false;
                         for (Game game : gamesInDatabase) {

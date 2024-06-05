@@ -1,7 +1,6 @@
 package src.View.User;
 
 import src.Controller.AdmController;
-import src.Controller.MementoController;
 import src.Controller.UsuarioController;
 import src.Controller.UsuarioFotoController;
 import src.Model.UsuarioFoto;
@@ -18,6 +17,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class profileEditGUI extends JFrame {
 
@@ -33,14 +34,13 @@ public class profileEditGUI extends JFrame {
     private String selectedFilePath;
     private UsuarioController userController;
     private AdmController admController;
-    private MementoController mementoController;
+    private static final Logger logger = Logger.getLogger(profileEditGUI.class.getName());
 
     public profileEditGUI(SessionCustom sessionCustom) throws SQLException {
         this.sessionCustom = sessionCustom;
         this.userFotoController = new UsuarioFotoController();
         this.userController = new UsuarioController();
         this.admController = new AdmController();
-        this.mementoController = new MementoController();
         if (sessionCustom == null) {
             JOptionPane.showMessageDialog(null, "Por favor realize login", "No Session", JOptionPane.INFORMATION_MESSAGE);
             dispose();
@@ -81,10 +81,8 @@ public class profileEditGUI extends JFrame {
                         System.out.println("Click");
                         try {
                             saveProfileChanges();
-                        } catch (SQLException ex) {
-                            ex.printStackTrace();
-                        } catch (IOException ex) {
-                            ex.printStackTrace();
+                        } catch (SQLException | IOException ex) {
+                            logger.log(Level.SEVERE, "Error on edit", ex);
                         }
                     }
                 });
@@ -98,7 +96,7 @@ public class profileEditGUI extends JFrame {
                         try {
                             undoChanges();
                         } catch (SQLException ex) {
-                            ex.printStackTrace();
+                            logger.log(Level.SEVERE, "Error on login", ex);
                         }
                     }
                 });

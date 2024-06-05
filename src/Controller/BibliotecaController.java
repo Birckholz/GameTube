@@ -4,8 +4,11 @@ import src.Model.Biblioteca;
 import src.Model.DAO.BibliotecaDAO;
 
 import src.Model.Biblioteca;
+import src.Model.Game;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
@@ -43,5 +46,9 @@ public class BibliotecaController {
             }
         }
         return true;
+    }
+
+    public ResultSet pegarGames(int idUser) throws SQLException {
+        return bibliotecaDAO.pegarGamesUsuario(idUser);
     }
 }

@@ -1,6 +1,7 @@
 package src.View.User;
 
 
+import src.Controller.BibliotecaController;
 import src.Controller.GameFotoController;
 import src.Controller.UsuarioController;
 import src.Session.SessionCustom;
@@ -21,10 +22,12 @@ public class BibliotecaView extends JFrame {
     private JPanel gamePanelContainer;
     private UsuarioController userController;
     private GameFotoController gameFotoController;
+    private BibliotecaController bibliotecaController;
 
     public BibliotecaView(SessionCustom sessionCustom) {
         gameFotoController = new GameFotoController();
         userController = new UsuarioController();
+        bibliotecaController = new BibliotecaController();
         this.sessionCustom = sessionCustom;
 
         try {
@@ -93,10 +96,10 @@ public class BibliotecaView extends JFrame {
         setJMenuBar(barraMenu);
         setLocationRelativeTo(null);
 
-        readGameListingsFromFile("src/games.json");
+        readGameListingsFromFile();
     }
 
-    private void readGameListingsFromFile(String filePath) {
+    private void readGameListingsFromFile() {
         try {
             gamePanelContainer = new JPanel(new GridLayout(0, 3, 10, 10));
             gamePanelContainer.setBackground(Color.DARK_GRAY);
@@ -105,7 +108,7 @@ public class BibliotecaView extends JFrame {
             fillerPanel.setOpaque(false);
             gamePanelContainer.add(fillerPanel);
 
-            ResultSet resultSet = gameFotoController.fetchGameListingsWithPhotos();
+            ResultSet resultSet = bibliotecaController.pegarGames(sessionCustom.getUserAtual().getId());
 
             while (resultSet.next()) {
                 String name = resultSet.getString("NOME");
