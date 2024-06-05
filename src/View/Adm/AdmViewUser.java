@@ -2,6 +2,7 @@ package src.View.Adm;
 
 
 import src.Controller.UsuarioController;
+import src.Controller.UsuarioFotoController;
 import src.Model.Usuario;
 import src.MyCustomException;
 import src.Session.Session;
@@ -18,6 +19,7 @@ import java.util.Vector;
 
 public class AdmViewUser extends JFrame {
 
+    private UsuarioFotoController usuarioFotoController;
     private UsuarioController usuarioController;
     private Session session;
     private JTable table;
@@ -25,6 +27,7 @@ public class AdmViewUser extends JFrame {
 
     public AdmViewUser(Session session) {
         this.session = session;
+        this.usuarioFotoController = new UsuarioFotoController();
         this.usuarioController =new UsuarioController();
         if (session == null) {
             JOptionPane optionPane = new JOptionPane("Por favor realize login", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION);
@@ -120,12 +123,11 @@ public class AdmViewUser extends JFrame {
         columnNames.add("Name");
         columnNames.add("Email");
         columnNames.add("Username");
-        columnNames.add("MementoId");
         columnNames.add("Deletar");
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 6;
+                return column == 4;
             }
         };
 
@@ -134,8 +136,7 @@ public class AdmViewUser extends JFrame {
             String name = user.getName();
             String email = user.getEmail();
             String username = user.getUsername();
-            int mementoId = user.getMementoId();
-            tableModel.addRow(new Object[]{id, name, email, username, mementoId, "Deletar"});
+            tableModel.addRow(new Object[]{id, name, email, username, "Deletar"});
         }
 
         table.setModel(tableModel);
@@ -224,6 +225,10 @@ public class AdmViewUser extends JFrame {
             SwingUtilities.invokeLater(() -> {
                 try {
                     List<Usuario> usersInDatabase = usuarioController.findAllUsers();
+                    if (tableModel.getRowCount() == 0) {
+                        usuarioFotoController.deleteUsuarioFoto(usersInDatabase.get(0).getId());
+                        usuarioController.removeUsuario(usersInDatabase.get(0).getId());
+                    }
                     for (Usuario user : usersInDatabase) {
                         boolean found = false;
                         for (int i = 0; i < tableModel.getRowCount(); i++) {
@@ -234,6 +239,7 @@ public class AdmViewUser extends JFrame {
                             }
                         }
                         if (!found) {
+                            usuarioFotoController.deleteUsuarioFoto(user.getId());
                             usuarioController.removeUsuario(user.getId());
                         }
                     }

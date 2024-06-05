@@ -33,6 +33,23 @@ public class BibliotecaDAO {
         return gameIds;
     }
 
+    public List<Integer> doesUserHaveGame(int userId) {
+        List<Integer> idGameList = new ArrayList<>();
+        String query = "SELECT ID_GAME FROM BIBLIOTECA WHERE id_user = ?";
+        try (Connection conn = Conexao.getConexao();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setInt(1, userId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    idGameList.add(rs.getInt("ID_GAME"));
+                }
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error retrieving games for user", e);
+        }
+        return idGameList;
+    }
+
     public void insertBiblioteca(Biblioteca biblioteca) throws SQLException {
         String query = "INSERT INTO BIBLIOTECA (ID_GAME, ID_USUARIO) VALUES (?, ?)";
 

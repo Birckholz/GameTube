@@ -34,4 +34,14 @@ public class BibliotecaController {
             return false; // Indica que a inserção falhou
         }
     }
+
+    public boolean checkUserGames(int idUser, int idGame) {
+        List<Integer> gameIDs = bibliotecaDAO.doesUserHaveGame(idUser);
+        for (int id : gameIDs) {
+            if (id == idGame) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

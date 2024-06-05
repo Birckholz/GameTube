@@ -2,6 +2,7 @@ package src.View.Adm;
 
 
 import src.Controller.GameController;
+import src.Controller.GameFotoController;
 import src.Model.Game;
 import src.MyCustomException;
 import src.Session.Session;
@@ -22,6 +23,7 @@ import java.util.Vector;
 
 public class AdmViewJogos extends JFrame {
 
+    private GameFotoController gameFotoController;
     private GameController gameController;
     private Session session;
     private JTable table;
@@ -30,6 +32,7 @@ public class AdmViewJogos extends JFrame {
 
     public AdmViewJogos(Session session) {
         this.session = session;
+        this.gameFotoController = new GameFotoController();
         this.gameController = new GameController();
         if (session == null) {
             JOptionPane optionPane = new JOptionPane("Por favor realize login", JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION);
@@ -242,6 +245,10 @@ public class AdmViewJogos extends JFrame {
             SwingUtilities.invokeLater(() -> {
                 try {
                     List<Game> gamesInDatabase = gameController.findAllGames();
+                    if (tableModel.getRowCount() == 0) {
+                        gameFotoController.deleteGameFoto(gamesInDatabase.get(0).getId());
+                        gameController.deleteGame(gamesInDatabase.get(0).getId());
+                    }
                     for (int i = 0; i < tableModel.getRowCount(); i++) {
                         int id = (int) tableModel.getValueAt(i, 1);
                         boolean found = false;
@@ -252,6 +259,7 @@ public class AdmViewJogos extends JFrame {
                             }
                         }
                         if (!found) {
+                            gameFotoController.deleteGameFoto(id);
                             gameController.deleteGame(id);
                         }
                     }

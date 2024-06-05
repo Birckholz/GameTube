@@ -141,7 +141,9 @@ public class Loja extends JFrame {
                 pagarButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        if (bibliotecaController.insertBiblioteca(gameId, session.getUserAtual().getId())) {
+
+                        if (bibliotecaController.checkUserGames(gameId, session.getUserAtual().getId())) {
+                            bibliotecaController.insertBiblioteca(gameId, session.getUserAtual().getId());
                             System.out.println("Compra realizada com sucesso");
                         } else {
                             showErrorPopup("Jogo já comprado", "Fechar");

@@ -197,12 +197,17 @@ public class profileEditGUI extends JFrame {
 
                 setLocationRelativeTo(null);
                 setVisible(true);
-
-                nameField.setText(session.getUserAtual().getName());
-                senhaField.setText(session.getUserAtual().getSenha());
-                usernameField.setText(session.getUserAtual().getUsername());
-                emailField.setText(session.getUserAtual().getEmail());
-
+                if(session.getAdmAtual() != null) {
+                    nameField.setText(session.getAdmAtual().getName());
+                    senhaField.setText(session.getAdmAtual().getSenha());
+                    usernameField.setText(session.getAdmAtual().getUsername());
+                    emailField.setText(session.getAdmAtual().getEmail());
+                }else {
+                    nameField.setText(session.getUserAtual().getName());
+                    senhaField.setText(session.getUserAtual().getSenha());
+                    usernameField.setText(session.getUserAtual().getUsername());
+                    emailField.setText(session.getUserAtual().getEmail());
+                }
             } else {
                 throw new MyCustomException("Session undefined");
             }
